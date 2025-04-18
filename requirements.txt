@@ -1,0 +1,6 @@
+pandas
+numpy
+PyMuPDF
+pdfminer.six
+matplotlib
+regex
