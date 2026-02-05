@@ -8,7 +8,7 @@ def save_metadata_json(metadata_list, output_path):
     for entry in metadata_list:
         formatted["dataResources"].append({
             "patient_id": entry["patient_id"],
-            "gestaional_age": entry.get("gestational_age"),
+            "gestational_age": entry.get("gestational_age"),
             "demographic_age": entry.get("age"),
             "BMI": entry.get("BMI"),
             "examination_findings": entry.get("findings", [])
