@@ -1,142 +1,197 @@
-# 🏥 Medical Report ETL System
+# Medical Report ETL System
 
-**Transform scanned medical reports into AI/ML-ready data—securely and privately**
+**Extract text from scanned medical reports, anonymize PII, and output structured data.**
 
-> Extract text • Redact PII • Parse metadata • Archive safely  
-> [Quick Start](#-quick-start) • [Why Modular?](#-why-modularity-not-spaghetti-code) • [Documentation](#-documentation) • [GitHub](https://github.com/GunaPalanivel/Medical-Report-ETL-System)
-
----
-
-## 📖 Overview
-
-A modular ETL pipeline that **automatically processes scanned medical reports** and produces:
-
-✅ **Anonymized PDFs** — All patient identifiers redacted using regex + UUID mapping  
-✅ **Machine-readable JSON** — Structured metadata (gestational age, demographics, findings)  
-✅ **100% HIPAA Compliant** — Audit trail + encryption support  
-✅ **Production-Ready** — Handles 300+ DPI PDFs via Tesseract OCR
-
-Perfect for healthcare research, data sharing, and AI training where privacy is non-negotiable.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Version](https://img.shields.io/badge/version-1.1.1-green.svg)](CHANGELOG.md)
 
 ---
 
-## ⚡ Quick Start
+## Overview
+
+A Python ETL pipeline that processes scanned medical PDF reports and produces:
+
+- **Anonymized PDFs** — Patient identifiers replaced with `[ANONYMIZED]` placeholders
+- **Structured JSON** — Extracted metadata (gestational age, demographics, clinical findings)
+- **UUID Mapping** — Original-to-anonymized ID mapping for authorized data linkage
+
+Designed for healthcare research scenarios where raw reports contain PHI that must be redacted before analysis.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- **Python 3.8+**
+- **Tesseract OCR** — [Installation guide](https://tesseract-ocr.github.io/tessdoc/Installation.html)
+- **Poppler** — [Windows](https://github.com/oschwartz10612/poppler-windows/releases) | [macOS](https://formulae.brew.sh/formula/poppler) | [Linux](https://poppler.freedesktop.org/)
+
+### Installation
 
 ```bash
-# 1. Setup
 git clone https://github.com/GunaPalanivel/Medical-Report-ETL-System.git
 cd Medical-Report-ETL-System
-python -m venv venv && source venv/bin/activate  # or venv\Scripts\activate on Windows
+
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
+```
 
-# 2. Run
+### Configuration
+
+Edit paths in [src/pdf_handler.py](src/pdf_handler.py) to match your system:
+
+```python
+POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"  # Update this
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"  # Update this
+```
+
+### Usage
+
+1. Place PDF files in `data/raw_reports/`
+2. Run the pipeline:
+
+```bash
 python main.py
-
-# 3. Check outputs
-ls anonymized_reports/          # PDFs with redacted names/IDs
-cat patient_metadata.json       # Extracted clinical data (gestational age, findings, etc.)
 ```
 
-**That's it!** Input PDFs go in `data/raw_reports/`, outputs appear in:
-
-- 📄 `data/anonymized_reports/` — Redacted PDFs
-- 📋 `patient_metadata.json` — Extracted structured data
-- 🔐 `id_map.json` — UUID mapping (for authorized researchers)
-
-See [docs/SETUP.md](docs/SETUP.md) for detailed configuration.
+3. Outputs appear in:
+   - `data/anonymized_reports/` — Redacted PDFs
+   - `data/patient_metadata.json` — Extracted structured data
+   - `data/id_map.json` — UUID mapping (keep secure!)
 
 ---
 
-## 🎯 Why Modularity? (Not Spaghetti Code)
+## Features
 
-**Problem with mixed responsibilities:**
+### PII Anonymization (4 Patterns)
+
+| Field         | Regex Pattern                | Replacement    |
+| ------------- | ---------------------------- | -------------- |
+| Patient Name  | `Patient Name[:\s]+[\w\s]+`  | `[ANONYMIZED]` |
+| Patient ID    | `Patient ID[:\s]+\w+`        | `[ANONYMIZED]` |
+| Hospital Name | `Hospital Name[:\s]+[\w\s]+` | `[ANONYMIZED]` |
+| Clinician     | `Clinician[:\s]+[\w\s]+`     | `[ANONYMIZED]` |
+
+### Metadata Extraction (5 Fields)
+
+- `patient_id` — UUID (anonymized identifier)
+- `gestational_age` — Extracted from report text
+- `demographic_age` — Patient age
+- `BMI` — Body mass index
+- `examination_findings` — Clinical findings array
+
+### Processing Pipeline
 
 ```
-❌ OLD: pdf_handler.py did BOTH read AND write PDFs
-❌ OLD: anonymizer.py had hardcoded patterns (not extensible)
-❌ OLD: extractor.py was monolithic (hard to test independently)
-❌ RESULT: Adding a new feature required editing 3+ files
+raw_reports/*.pdf
+       │
+       ▼
+┌─────────────────┐
+│  OCR (Tesseract)│  read_pdf_text() @ 300 DPI
+└────────┬────────┘
+         │ raw text
+         ▼
+┌─────────────────┐
+│   Anonymize     │  anonymize_text() - 4 PII patterns
+└────────┬────────┘
+         │ redacted text
+         ▼
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌───────┐ ┌───────┐
+│Write  │ │Extract│  write_anonymized_pdf() / extract_metadata()
+│PDF    │ │Fields │
+└───┬───┘ └───┬───┘
+    │         │
+    ▼         ▼
+anonymized_   patient_
+reports/      metadata.json
 ```
-
-**Solution: Feature-Based Architecture**
-
-```
-✅ NEW: ocr/ only reads PDFs → easy to test
-✅ NEW: anonymization/ only redacts → plugin system for 8 PII patterns
-✅ NEW: metadata/ extracts fields → pluggable extractors
-✅ NEW: output/ only writes → atomic writes prevent corruption
-✅ RESULT: Add new feature in ONE place, no editing others
-```
-
-### 🧩 The 4 Layers
-
-| Layer       | Responsibility              | Example                               |
-| ----------- | --------------------------- | ------------------------------------- |
-| 🔄 Pipeline | Coordinate stages           | `pipeline/orchestrator.py` (20 lines) |
-| 🎯 Features | Business logic by domain    | `features/ocr/`, `anonymization/`     |
-| 🏛️ Core     | Shared infrastructure       | Config, logging, exceptions, utils    |
-| 🧪 Tests    | Unit + integration coverage | 85%+ test coverage                    |
-
-**Result:** New developers can add features without understanding the whole system. Tests run in isolation. No circular dependencies.
 
 ---
 
-## 📚 Documentation
+## Project Structure
 
-**Getting Started?**
-
-- [Quick Start](#-quick-start) above — 5 minutes
-- [docs/SETUP.md](docs/SETUP.md) — Local dev environment
-
-**Understanding the System?**
-
-- [docs/MODULAR_ARCHITECTURE.md](docs/MODULAR_ARCHITECTURE.md) — Why modular design, 4 layers, how to extend
-- [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) — File organization, module responsibilities
-
-**Building & Contributing?**
-
-- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — Run tests, formatting, commit standards
-- [CONTRIBUTING.md](CONTRIBUTING.md) — How to add features (plugins, new fields)
-
-**Production & Operations?**
-
-- [docs/FEATURES.md](docs/FEATURES.md) — All 12 capabilities with options
-- [docs/PERFORMANCE.md](docs/PERFORMANCE.md) — Benchmarks, optimization, multiprocessing
-- [docs/HIPAA_COMPLIANCE.md](docs/HIPAA_COMPLIANCE.md) — Privacy controls, encryption, audit logs
-- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Docker, Kubernetes, monitoring
+```
+Medical-Report-ETL-System/
+├── main.py                 # Entry point - orchestrates pipeline
+├── requirements.txt        # Python dependencies
+├── src/
+│   ├── __init__.py         # Package exports
+│   ├── pdf_handler.py      # OCR text extraction + PDF writing
+│   ├── anonymizer.py       # PII redaction (4 patterns)
+│   ├── extractor.py        # Metadata field extraction
+│   └── json_writer.py      # JSON output formatting
+├── data/
+│   ├── raw_reports/        # Input: scanned PDFs
+│   ├── anonymized_reports/ # Output: redacted PDFs
+│   ├── patient_metadata.json
+│   └── id_map.json         # UUID mapping (sensitive!)
+└── docs/                   # Documentation
+```
 
 ---
 
-## 🔧 Key Capabilities
+## Current Limitations
 
-✅ **OCR Processing** — Extract text from 300+ DPI scanned PDFs  
-✅ **8 PII Patterns** — Redact names, IDs, addresses, phone, SSN, DOB, MRN, Facility  
-✅ **5 Metadata Fields** — Gestational age, demographics, findings, clinical notes  
-✅ **UUID De-ID** — Cryptographic mapping for authorized researchers  
-✅ **HIPAA Safe Harbor** — 100% compliant anonymization  
-✅ **Plugin Architecture** — Add new patterns/extractors in minutes  
-✅ **85%+ Test Coverage** — Unit + integration tests  
-✅ **Atomic Writes** — No corrupted outputs on failures
+> **Note:** This is v1.1.1 — a working baseline with known limitations.
 
-See [docs/FEATURES.md](docs/FEATURES.md) for complete feature list with options.
+| Limitation            | Impact                                     | Planned Fix                |
+| --------------------- | ------------------------------------------ | -------------------------- |
+| Hardcoded paths       | Must edit `pdf_handler.py` for each system | Environment variables      |
+| 4 PII patterns only   | May miss some PHI (SSN, DOB, phone, etc.)  | Expand to 8+ patterns      |
+| No tests              | Cannot verify changes safely               | Add pytest suite           |
+| Sequential processing | Slow for large batches                     | Multiprocessing            |
+| No encryption         | `id_map.json` stored in plaintext          | AES-256 at-rest encryption |
 
----
-
-## 🤝 Contributing
-
-Found a bug? Want to add a PII pattern? Need a new metadata field?
-
-- **Add a PII Pattern** (5 min): See [CONTRIBUTING.md](CONTRIBUTING.md#adding-pii-patterns)
-- **Add a Metadata Extractor** (30 min): See [CONTRIBUTING.md](CONTRIBUTING.md#adding-extractors)
-- **Report Issues**: [GitHub Issues](https://github.com/GunaPalanivel/Medical-Report-ETL-System/issues)
-- **Security Vulnerabilities**: See [SECURITY.md](SECURITY.md)
+See [docs/ROADMAP.md](docs/ROADMAP.md) for planned improvements.
 
 ---
 
-## 📝 License
+## Documentation
 
-[MIT License](LICENSE) — Use freely in your healthcare organization.
+- [SETUP.md](docs/SETUP.md) — Detailed installation instructions
+- [FEATURES.md](docs/FEATURES.md) — Complete feature documentation
+- [HIPAA_COMPLIANCE.md](docs/HIPAA_COMPLIANCE.md) — Privacy considerations
+- [ROADMAP.md](docs/ROADMAP.md) — Future development plans
+- [CHANGELOG.md](CHANGELOG.md) — Version history
 
-## 🙏 Acknowledgments
+---
 
-Built for the HIPAA-Era Healthcare Data Sharing Initiative. Inspired by real-world privacy challenges in clinical research.
+## Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+**Quick contributions:**
+
+- Add a PII pattern to `src/anonymizer.py`
+- Add a metadata field to `src/extractor.py`
+- Report issues via [GitHub Issues](https://github.com/GunaPalanivel/Medical-Report-ETL-System/issues)
+
+---
+
+## Security
+
+- **Never commit** `data/id_map.json` — contains the UUID↔original mapping
+- Report vulnerabilities via [SECURITY.md](SECURITY.md)
+- See [HIPAA_COMPLIANCE.md](docs/HIPAA_COMPLIANCE.md) for privacy guidance
+
+---
+
+## License
+
+[MIT License](LICENSE) — Free for use in healthcare organizations.
+
+---
+
+## Acknowledgments
+
+Built for healthcare data sharing scenarios where privacy is critical. Inspired by real-world challenges in clinical research data anonymization.

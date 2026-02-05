@@ -19,7 +19,10 @@ credentials.json
 # Local Tracking Document (not committed, internal reference only)
 doc.md
 Sandbox
-docs_local
+docs_local/
+
+# Original task assignment document (internal context)
+Appendix A - Report Format.md
 
 # ============================================================================
 # PYTHON & VIRTUAL ENVIRONMENT

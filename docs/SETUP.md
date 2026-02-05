@@ -12,7 +12,6 @@
 - **Tesseract OCR** (language data + executables)
 - **Poppler** (PDF processing utilities)
 - **Git** (for version control)
-- **4 GB RAM** minimum (8 GB recommended for batch processing)
 
 ### Platform-Specific Installation
 
@@ -28,8 +27,8 @@
 # Extract to a folder (e.g., C:\poppler-24.08.0)
 
 # 3. Verify installations
-C:\Program Files\Tesseract-OCR\tesseract.exe --version
-dir C:\poppler-24.08.0\Library\bin\pdftoppm.exe
+& "C:\Program Files\Tesseract-OCR\tesseract.exe" --version
+Test-Path "C:\poppler-24.08.0\Library\bin\pdftoppm.exe"
 ```
 
 #### Linux (Ubuntu/Debian)
@@ -80,65 +79,53 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-**Expected output:**
+**Expected packages installed:**
 
-```
-Successfully installed pytesseract pdf2image fpdf2 Pillow cryptography jsonschema pytest pytest-cov black flake8 mypy
-```
+- pytesseract
+- pdf2image
+- fpdf2
+- Pillow
 
-### Step 4: Configure Environment
+### Step 4: Configure System Paths
 
-```bash
-# Copy template
-cp .env.example .env
+> **Important:** You must edit the paths in `src/pdf_handler.py` to match your system.
 
-# Edit .env with your system paths
+Open `src/pdf_handler.py` and update these lines:
+
+```python
 # Windows example:
-TESSERACT_PATH=C:\Program Files\Tesseract-OCR\tesseract.exe
-POPPLER_PATH=C:\poppler-24.08.0\Library\bin
-INPUT_DIR=data/raw_reports
-OUTPUT_DIR=data/anonymized_reports
-METADATA_OUTPUT=data/patient_metadata.json
-ID_MAP_PATH=data/id_map.json
-LOG_DIR=logs
-ENV=development
-LOG_LEVEL=INFO
+POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Linux example:
-TESSERACT_PATH=/usr/bin/tesseract
-POPPLER_PATH=/usr/bin
-INPUT_DIR=data/raw_reports
-OUTPUT_DIR=data/anonymized_reports
-METADATA_OUTPUT=data/patient_metadata.json
-ID_MAP_PATH=data/id_map.json
-LOG_DIR=logs
-ENV=development
-LOG_LEVEL=INFO
+POPPLER_PATH = "/usr/bin"
+# pytesseract will auto-detect if tesseract is in PATH
 ```
 
 ### Step 5: Verify Installation
 
 ```bash
-# Test Tesseract integration
-python -c "import pytesseract; print(pytesseract.pytesseract.get_tesseract_version())"
+# Test imports
+python -c "from src import *; print('All imports OK')"
+
+# Test Tesseract
+python -c "import pytesseract; print('Tesseract OK')"
 
 # Test PDF processing
 python -c "from pdf2image import convert_from_path; print('PDF2Image OK')"
-
-# Run basic sanity check
-python -m pytest tests/ -v --collect-only | head -20
 ```
 
 ---
 
-## Quick Test
+## Running the Pipeline
 
-### 1. Prepare Sample PDF
+### 1. Prepare Input PDFs
+
+Place scanned PDF files in `data/raw_reports/`:
 
 ```bash
-mkdir -p data/raw_reports
-# Copy a sample PDF to data/raw_reports/
-# Or use the included test PDF
+# Check the input folder
+ls data/raw_reports/
 ```
 
 ### 2. Run Pipeline
@@ -150,47 +137,52 @@ python main.py
 **Expected output:**
 
 ```
-2026-02-05 10:30:45 - INFO - MEDICAL REPORT ETL PIPELINE STARTED
-2026-02-05 10:30:45 - INFO - Found 1 PDF files to process
-2026-02-05 10:30:47 - INFO - [1/1] Processing: sample_report.pdf
-2026-02-05 10:30:52 - INFO - ✓ Successfully processed sample_report.pdf
-2026-02-05 10:30:52 - INFO - PIPELINE COMPLETED: 1 succeeded, 0 failed
+Processing: report_001.pdf
+✅ Saved anonymized report to data/anonymized_reports/550e8400-e29b-41d4-a716-446655440000.pdf
+Processing: report_002.pdf
+✅ Saved anonymized report to data/anonymized_reports/6ba7b810-9dad-11d1-80b4-00c04fd430c8.pdf
+...
+✅ Saved metadata to data/patient_metadata.json
+
+=== PROCESSING SUMMARY ===
+✅ Successfully processed: 50 reports
+❌ Failed: 0 reports
 ```
 
 ### 3. Check Outputs
 
 ```bash
-# Anonymized PDF (with UUID filename)
-ls -la data/anonymized_reports/
-# Output: 550e8400-e29b-41d4-a716-446655440000.pdf
+# Anonymized PDFs (with UUID filenames)
+ls data/anonymized_reports/
 
 # Structured metadata
 cat data/patient_metadata.json
-# Output: {"dataResources": [...]}
 
-# Processing logs
-tail -20 logs/etl.log
+# UUID mapping (keep this secure!)
+cat data/id_map.json
 ```
 
 ---
 
-## Configuration Reference
+## Project Structure
 
-### Environment Variables
-
-| Variable          | Purpose                       | Default                      | Example                                        |
-| ----------------- | ----------------------------- | ---------------------------- | ---------------------------------------------- |
-| `TESSERACT_PATH`  | Path to tesseract executable  | Auto-detected                | `C:\Program Files\Tesseract-OCR\tesseract.exe` |
-| `POPPLER_PATH`    | Path to poppler bin directory | Auto-detected                | `C:\poppler-24.08.0\Library\bin`               |
-| `INPUT_DIR`       | Raw PDF input folder          | `data/raw_reports`           | Custom path allowed                            |
-| `OUTPUT_DIR`      | Anonymized PDF output folder  | `data/anonymized_reports`    | Custom path allowed                            |
-| `METADATA_OUTPUT` | JSON metadata file path       | `data/patient_metadata.json` | Custom filename allowed                        |
-| `ID_MAP_PATH`     | UUID mapping file (protect!)  | `data/id_map.json`           | Custom path (add to .gitignore)                |
-| `LOG_DIR`         | Log output folder             | `logs`                       | Custom path allowed                            |
-| `ENV`             | Execution environment         | `development`                | `development` / `docker` / `production`        |
-| `LOG_LEVEL`       | Logging verbosity             | `INFO`                       | `DEBUG` / `INFO` / `WARNING` / `ERROR`         |
-| `BATCH_SIZE`      | PDFs to process before flush  | 50                           | Integer > 0                                    |
-| `WORKERS`         | Parallel workers (Phase 5)    | 1                            | 1 to 8 (based on CPU cores)                    |
+```
+Medical-Report-ETL-System/
+├── main.py                     # Entry point
+├── requirements.txt            # Dependencies
+├── src/
+│   ├── __init__.py             # Package exports
+│   ├── pdf_handler.py          # OCR + PDF generation (EDIT PATHS HERE)
+│   ├── anonymizer.py           # PII redaction
+│   ├── extractor.py            # Metadata extraction
+│   └── json_writer.py          # JSON output
+├── data/
+│   ├── raw_reports/            # Input: your PDFs go here
+│   ├── anonymized_reports/     # Output: redacted PDFs
+│   ├── patient_metadata.json   # Output: extracted data
+│   └── id_map.json             # Output: UUID mapping (sensitive!)
+└── docs/                       # Documentation
+```
 
 ---
 
@@ -198,118 +190,107 @@ tail -20 logs/etl.log
 
 ### "tesseract not found"
 
+**Cause:** Tesseract path not configured correctly.
+
+**Solution:** Edit `src/pdf_handler.py`:
+
 ```python
-# Issue: Tesseract path not configured correctly
-
-# Solution 1: Update .env
-TESSERACT_PATH=/path/to/tesseract
-
-# Solution 2: Test manually
-import pytesseract
-pytesseract.pytesseract.pytesseract_cmd = r'C:\Path\To\tesseract.exe'
-print(pytesseract.image_to_string(image))
+# Update to your actual path
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 ```
 
-### "poppler not found"
+**Verify:**
+
+```bash
+python -c "import pytesseract; pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'; print(pytesseract.get_tesseract_version())"
+```
+
+### "poppler not found" or "Unable to get page count"
+
+**Cause:** Poppler path not configured.
+
+**Solution:** Edit `src/pdf_handler.py`:
 
 ```python
-# Issue: Poppler path not configured
+# Update to your actual path
+POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
+```
 
-# Solution 1: Update .env
-POPPLER_PATH=/path/to/poppler/bin
+**Verify:**
 
-# Solution 2: Test manually
-from pdf2image import convert_from_path
-images = convert_from_path("file.pdf", poppler_path=r'C:\path\to\poppler\Library\bin')
+```bash
+python -c "from pdf2image import convert_from_path; print(convert_from_path('test.pdf', poppler_path=r'C:\\poppler-24.08.0\\Library\\bin'))"
 ```
 
 ### "ModuleNotFoundError: No module named 'pytesseract'"
 
-```bash
-# Issue: Dependencies not installed
+**Cause:** Dependencies not installed.
 
-# Solution: Reinstall
-pip install --upgrade pip
+**Solution:**
+
+```bash
 pip install -r requirements.txt
-pip list | grep tesseract
+pip list | grep -i tesseract
 ```
 
-### "Empty OCR output"
+### Empty OCR output
+
+**Cause:** Low quality scan or wrong DPI.
+
+**Solution:** The system uses 300 DPI by default. For better results:
+
+- Ensure source PDFs are 300+ DPI
+- Check that text is clearly visible in the scanned images
+
+### Import errors from src package
+
+**Cause:** Running from wrong directory.
+
+**Solution:** Always run from project root:
 
 ```bash
-# Issue: Low DPI or obscured text
-
-# Workarounds:
-# 1. Check PDF DPI (should be 300+)
-# 2. verify image quality
-# 3. Adjust OCR parameters in src/config.py:
-#    PSM (Page Segmentation Mode): 0-13
-#    OEM (OCR Engine Mode): 0-3
-
-# Test with specific parameters:
-python -c "
-import pytesseract
-from pdf2image import convert_from_path
-images = convert_from_path('file.pdf')
-text = pytesseract.image_to_string(images[0], lang='eng', config='--psm 3 --oem 3')
-print(text)
-"
-```
-
-### "Out of memory with large batches"
-
-```bash
-# Issue: Too many PDFs processed simultaneously
-
-# Solutions:
-# 1. Reduce batch size in .env:
-BATCH_SIZE=10
-
-# 2. Use parallel pipeline (Phase 5):
-WORKERS=4
-
-# 3. Process in smaller chunks manually:
-python -c "
-from src.pipeline.orchestrator import ETLPipeline
-import glob
-pdfs = glob.glob('data/raw_reports/*.pdf')[:10]  # Process 10 at a time
-pipeline = ETLPipeline()
-pipeline.process_reports(pdfs)
-"
+cd Medical-Report-ETL-System
+python main.py
 ```
 
 ---
 
-## Docker Setup (Optional)
+## Data Flow
 
-### Build Image
-
-```bash
-docker build -t medical-etl:latest .
 ```
-
-### Run Container
-
-```bash
-docker run -v $(pwd)/data:/app/data \
-           -v $(pwd)/logs:/app/logs \
-           -e INPUT_DIR=/app/data/raw_reports \
-           -e OUTPUT_DIR=/app/data/anonymized_reports \
-           medical-etl:latest python main.py
-```
-
-### Docker Compose
-
-```bash
-docker-compose build
-docker-compose up
+data/raw_reports/*.pdf
+        │
+        ▼
+┌──────────────────────┐
+│  read_pdf_text()     │  OCR at 300 DPI
+│  (pdf_handler.py)    │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  anonymize_text()    │  4 PII patterns replaced
+│  (anonymizer.py)     │
+└──────────┬───────────┘
+           │
+     ┌─────┴─────┐
+     │           │
+     ▼           ▼
+┌─────────┐  ┌───────────────┐
+│write_   │  │extract_       │
+│anonymized│ │metadata()     │
+│_pdf()   │  │(extractor.py) │
+└────┬────┘  └───────┬───────┘
+     │               │
+     ▼               ▼
+data/anonymized_    patient_metadata.json
+reports/*.pdf       + id_map.json
 ```
 
 ---
 
 ## Next Steps
 
-- ✅ **Setup complete?** Run `python main.py` with a test PDF
-- 📚 **Learn more?** See [MODULAR_ARCHITECTURE.md](MODULAR_ARCHITECTURE.md)
-- 🔨 **Build features?** See [DEVELOPMENT.md](DEVELOPMENT.md)
-- 📊 **Production deploy?** See [DEPLOYMENT.md](DEPLOYMENT.md)
+- **Setup complete?** Run `python main.py` with your PDFs
+- **Want to add PII patterns?** See [CONTRIBUTING.md](../CONTRIBUTING.md)
+- **Understand the features?** See [FEATURES.md](FEATURES.md)
+- **Future plans?** See [ROADMAP.md](ROADMAP.md)

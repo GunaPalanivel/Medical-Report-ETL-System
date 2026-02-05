@@ -1,6 +1,8 @@
-pandas
-numpy
-PyMuPDF
-pdfminer.six
-matplotlib
-regex
+# Medical Report ETL System - Dependencies
+# Python 3.8+ required
+
+# Core OCR & PDF Processing
+pytesseract>=0.3.10      # OCR text extraction via Tesseract
+pdf2image>=1.16.0        # PDF to image conversion for OCR
+fpdf2>=2.7.0             # Generate anonymized PDFs
+Pillow>=9.0.0            # Image processing (required by pdf2image)
