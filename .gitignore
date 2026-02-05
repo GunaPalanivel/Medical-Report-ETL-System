@@ -1,0 +1,182 @@
+# ============================================================================
+# SENSITIVE DATA - CRITICAL (Prevent accidental PII exposure)
+# ============================================================================
+
+# Patient ID Mapping (original → UUID) - CONFIDENTIAL
+id_map.json
+id_map.json.encrypted
+
+# Encryption Keys & Secrets
+.env
+.env.local
+.env.*.local
+
+# AWS/Cloud Credentials
+.aws/
+.gcp/
+credentials.json
+
+# Local Tracking Document (not committed, internal reference only)
+doc.md
+Sandbox
+docs_local
+
+# ============================================================================
+# PYTHON & VIRTUAL ENVIRONMENT
+# ============================================================================
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Package Installation
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Code Quality
+.flake8
+.pylintrc
+
+# ============================================================================
+# IDE & EDITOR
+# ============================================================================
+
+# VS Code
+.vscode/
+*.code-workspace
+.vs/
+
+# PyCharm/IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim/Neovim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ============================================================================
+# OPERATING SYSTEM
+# ============================================================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.Trash-*
+
+# ============================================================================
+# BUILD & ARTIFACT OUTPUT
+# ============================================================================
+
+# Build artifacts
+*.o
+*.a
+*.la
+*.lo
+*.slo
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Logs & Temporary Files
+logs/
+*.log
+*.log.*
+temp/
+tmp/
+
+# ============================================================================
+# DATA & OUTPUTS (Optional: Uncomment if shared development)
+# ============================================================================
+
+# Raw PDF inputs (keep local for development)
+# data/raw_reports/*.pdf
+
+# Anonymized outputs (can regenerate)
+data/anonymized_reports/*.pdf
+
+# Generated metadata (can regenerate)
+# data/patient_metadata.json
+
+# ============================================================================
+# PROJECT-SPECIFIC
+# ============================================================================
+
+# Benchmark/profiling results (keep for reference)
+# tests/benchmarks/baseline_results.json
+# tests/benchmarks/optimized_results.json
+
+# ============================================================================
+# CI/CD & DEPLOYMENT
+# ============================================================================
+
+# GitHub Actions artifacts
+.github/workflows/*.bak
+
+# Kubernetes manifests with secrets
+k8s/*.secret.yaml
+k8s/*.prod.yaml
+
+# .env files across environments (all should be gitignored)
+.env*.prod
+.env*.staging
+.env*.dev
+
+# ============================================================================
+# NOTES & COMMENTS
+# ============================================================================
+
+# Keep .gitignore simple and focused on:
+# 1. SENSITIVE DATA (id_map.json, .env, credentials)
+# 2. BUILD/CACHE OUTPUT (__pycache__, .pytest_cache, dist/)
+# 3. IDE FILES (.vscode, .idea)
+# 4. LOG FILES (logs/)
+#
+# Purpose: Prevent accidental commit of PII, secrets, build artifacts
+# Review quarterly for additions
+# Last Updated: 2026-02-04

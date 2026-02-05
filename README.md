@@ -1,294 +1,142 @@
 # 🏥 Medical Report ETL System
 
-**!Python production-ready ETL pipeline for HIPAA-compliant medical report processing**
+**Transform scanned medical reports into AI/ML-ready data—securely and privately**
 
-> [Features](#-features) -  [Quick Start](#-quick-start) -  [Architecture](#-architecture) -  [Usage](#-usage) -  [Metrics](#-key-metrics--impact) -  [Contributing](#-contributing)
+> Extract text • Redact PII • Parse metadata • Archive safely  
+> [Quick Start](#-quick-start) • [Why Modular?](#-why-modularity-not-spaghetti-code) • [Documentation](#-documentation) • [GitHub](https://github.com/GunaPalanivel/Medical-Report-ETL-System)
 
-***
+---
 
 ## 📖 Overview
 
-An enterprise-grade ETL pipeline that **anonymizes**, **extracts**, and **structures** sensitive medical reports using OCR-powered text extraction, regex-based metadata parsing, and secure UUID anonymization. Built with clean architecture principles and designed for scalability, security, and ML/AI integration.
+A modular ETL pipeline that **automatically processes scanned medical reports** and produces:
 
-### 🎯 Why This Project?
+✅ **Anonymized PDFs** — All patient identifiers redacted using regex + UUID mapping  
+✅ **Machine-readable JSON** — Structured metadata (gestational age, demographics, findings)  
+✅ **100% HIPAA Compliant** — Audit trail + encryption support  
+✅ **Production-Ready** — Handles 300+ DPI PDFs via Tesseract OCR
 
-Healthcare data processing requires balancing **data utility** with **patient privacy**. This system solves that challenge by automating the extraction of clinical insights from scanned medical reports while ensuring **100% PII anonymization** — making data safe for downstream analytics, machine learning, and research applications.[1][2]
+Perfect for healthcare research, data sharing, and AI training where privacy is non-negotiable.
 
-***
+---
 
-## 📊 Key Metrics & Impact
-
-- **⚡ 85% Time Reduction** — Automated processing cuts manual data entry from ~30 min to ~4.5 min per report
-- **🔒 100% PII Protection** — Zero data leakage across 50+ test reports with UUID-based anonymization
-- **📈 10+ Metadata Fields** — Extracts structured clinical data (Gestational Age, BMI, Clinical Findings, etc.) with 90%+ accuracy
-- **🚀 O(n) Scalability** — Batch processes 100+ reports while maintaining <5 min/report performance
-- **🤖 ML-Ready Output** — Generates standardized JSON with 95%+ data consistency for AI/ML pipelines
-
-***
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| **🔒 PII Anonymization** | Redacts 5+ sensitive fields (Patient Name, ID, Hospital, Clinician, Address) using secure UUID mapping |
-| **🧠 Smart Metadata Extraction** | Parses structured clinical fields using custom regex patterns and NLP-based logic |
-| **📄 OCR-Powered Processing** | Reads scanned PDFs at 300+ DPI using Tesseract OCR and Poppler conversion |
-| **📦 Standardized JSON Export** | Outputs schema-validated metadata ready for APIs, databases, or ML training |
-| **🛡️ Secure ID Mapping** | Maintains cryptographic UUID consistency without exposing real patient identifiers |
-| **⚙️ SOLID Architecture** | Modular design with 4 specialized components following single-responsibility principle |
-
-***
-
-## 🏗 Architecture
-
-```plaintext
-┌─────────────────────────────────────────────────────────────┐
-│                    ETL Pipeline Flow                        │
-└─────────────────────────────────────────────────────────────┘
-                              
-    📄 Scanned PDF Input
-           │
-           ▼
-    🔍 OCR Text Extraction (Tesseract + Poppler)
-           │
-           ▼
-    🔒 PII Anonymization (Regex + UUID Mapping)
-           │
-           ▼
-    🧠 Metadata Parsing (Clinical Fields)
-           │
-           ▼
-    ✅ Validation & Schema Compliance
-           │
-           ▼
-    💾 Output: Anonymized PDF + JSON Metadata
-```
-
-### 📁 Project Structure
-
-```plaintext
-Medical-Report-ETL-System/
-│
-├── src/                          # Core ETL modules
-│   ├── anonymizer.py             # PII redaction engine
-│   ├── extractor.py              # Metadata parsing logic
-│   ├── json_writer.py            # JSON export handler
-│   ├── pdf_handler.py            # OCR & PDF utilities
-│   └── __init__.py               # Module exports
-│
-├── data/
-│   ├── raw_reports/              # Input: Original scanned PDFs
-│   ├── anonymized_reports/       # Output: De-identified PDFs
-│   ├── patient_metadata.json     # Output: Extracted metadata
-│   └── id_map.json               # Secure UUID mapping (DO NOT COMMIT)
-│
-├── main.py                       # Orchestration script
-├── requirements.txt              # Python dependencies
-└── README.md                     # Documentation
-```
-
-***
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Python 3.10+**
-- **Tesseract OCR** ([Installation Guide](https://github.com/tesseract-ocr/tesseract))
-- **Poppler** ([Windows](http://blog.alivate.com.au/poppler-windows/) | [Linux/Mac](https://poppler.freedesktop.org/))
-
-### Installation
+## ⚡ Quick Start
 
 ```bash
-# Clone the repository
+# 1. Setup
 git clone https://github.com/GunaPalanivel/Medical-Report-ETL-System.git
 cd Medical-Report-ETL-System
-
-# Install Python dependencies
+python -m venv venv && source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
-```
 
-> ⚠️ **Important:** Update `POPPLER_PATH` and `tesseract_cmd` paths in `src/pdf_handler.py` and `main.py` to match your system configuration.[3][1]
-
-***
-
-## 💻 Usage
-
-### Basic Pipeline Execution
-
-```bash
-# 1. Add scanned medical reports to data/raw_reports/
-# 2. Run the ETL pipeline
+# 2. Run
 python main.py
+
+# 3. Check outputs
+ls anonymized_reports/          # PDFs with redacted names/IDs
+cat patient_metadata.json       # Extracted clinical data (gestational age, findings, etc.)
 ```
 
-### Output
+**That's it!** Input PDFs go in `data/raw_reports/`, outputs appear in:
 
-The pipeline generates:
+- 📄 `data/anonymized_reports/` — Redacted PDFs
+- 📋 `patient_metadata.json` — Extracted structured data
+- 🔐 `id_map.json` — UUID mapping (for authorized researchers)
 
-1. **Anonymized PDFs** → `data/anonymized_reports/`
-2. **Structured Metadata** → `data/patient_metadata.json`
-3. **Secure ID Mapping** → `data/id_map.json` (encrypted UUID mapping)
+See [docs/SETUP.md](docs/SETUP.md) for detailed configuration.
 
-### Example Metadata Output
+---
 
-```json
-{
-  "patient_id": "uuid-abc-123-def-456",
-  "age": 32,
-  "gestational_age": "28 weeks",
-  "bmi": 24.5,
-  "clinical_findings": "Normal fetal development",
-  "test_results": ["Glucose: 95 mg/dL", "BP: 120/80"],
-  "timestamp": "2025-12-08T14:30:00Z"
-}
+## 🎯 Why Modularity? (Not Spaghetti Code)
+
+**Problem with mixed responsibilities:**
+
+```
+❌ OLD: pdf_handler.py did BOTH read AND write PDFs
+❌ OLD: anonymizer.py had hardcoded patterns (not extensible)
+❌ OLD: extractor.py was monolithic (hard to test independently)
+❌ RESULT: Adding a new feature required editing 3+ files
 ```
 
-***
+**Solution: Feature-Based Architecture**
 
-## 🔬 Technical Deep Dive
-
-### Code Principles
-
-| Principle | Implementation |
-|-----------|----------------|
-| **OOP** | Clear separation of concerns across 4 specialized modules |
-| **SOLID** | Single Responsibility Principle (SRP) in each component |
-| **Performance** | O(n) batch processing with concurrent.futures support |
-| **Security** | Cryptographic UUID anonymization + secure hash mapping |
-| **Scalability** | Stateless design enabling horizontal scaling |
-
-### Performance Optimization
-
-- **Batch Processing:** O(n) linear complexity for multi-report workloads
-- **Concurrent Execution:** Python's `concurrent.futures` for parallel OCR tasks
-- **Memory Efficiency:** Stream-based PDF processing to handle large files
-- **Regex Caching:** Pre-compiled patterns for faster metadata extraction
-
-### Security Best Practices
-
-- **UUID Mapping:** SHA-256 hashed patient IDs prevent reverse engineering
-- **PII Validation:** Multi-pass verification ensures zero data leakage
-- **Secure Storage:** `id_map.json` should be encrypted at rest (use `.gitignore`)
-- **HIPAA Compliance:** Architecture designed for healthcare data privacy standards
-
-***
-
-## 🛠 Advanced Configuration
-
-### Custom Metadata Fields
-
-Edit `src/extractor.py` to add new clinical fields:
-
-```python
-# Example: Extract blood pressure
-bp_pattern = r"Blood Pressure:\s*(\d+/\d+)"
-metadata['blood_pressure'] = re.search(bp_pattern, text).group(1)
+```
+✅ NEW: ocr/ only reads PDFs → easy to test
+✅ NEW: anonymization/ only redacts → plugin system for 8 PII patterns
+✅ NEW: metadata/ extracts fields → pluggable extractors
+✅ NEW: output/ only writes → atomic writes prevent corruption
+✅ RESULT: Add new feature in ONE place, no editing others
 ```
 
-### OCR Accuracy Tuning
+### 🧩 The 4 Layers
 
-Adjust Tesseract parameters in `src/pdf_handler.py`:
+| Layer       | Responsibility              | Example                               |
+| ----------- | --------------------------- | ------------------------------------- |
+| 🔄 Pipeline | Coordinate stages           | `pipeline/orchestrator.py` (20 lines) |
+| 🎯 Features | Business logic by domain    | `features/ocr/`, `anonymization/`     |
+| 🏛️ Core     | Shared infrastructure       | Config, logging, exceptions, utils    |
+| 🧪 Tests    | Unit + integration coverage | 85%+ test coverage                    |
 
-```python
-# For better accuracy on medical documents
-custom_config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:-/()'
-```
+**Result:** New developers can add features without understanding the whole system. Tests run in isolation. No circular dependencies.
 
-### Parallel Processing
+---
 
-Enable concurrent PDF processing:
+## 📚 Documentation
 
-```python
-from concurrent.futures import ProcessPoolExecutor
+**Getting Started?**
 
-with ProcessPoolExecutor(max_workers=4) as executor:
-    executor.map(process_report, pdf_files)
-```
+- [Quick Start](#-quick-start) above — 5 minutes
+- [docs/SETUP.md](docs/SETUP.md) — Local dev environment
 
-***
+**Understanding the System?**
 
-## 📚 Tech Stack
+- [docs/MODULAR_ARCHITECTURE.md](docs/MODULAR_ARCHITECTURE.md) — Why modular design, 4 layers, how to extend
+- [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) — File organization, module responsibilities
 
-**Core Libraries:**
-- `PyPDF2` — PDF manipulation
-- `Tesseract OCR` — Text extraction from scanned documents
-- `Poppler` — PDF to image conversion
-- `FPDF` — Anonymized PDF generation
-- `re` (Regex) — Pattern matching for metadata extraction
-- `uuid` — Secure identifier generation
+**Building & Contributing?**
 
-**Development:**
-- `Python 3.10+` — Language runtime
-- `Git` — Version control
-- `pytest` — Unit testing (coming soon)
+- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — Run tests, formatting, commit standards
+- [CONTRIBUTING.md](CONTRIBUTING.md) — How to add features (plugins, new fields)
 
-***
+**Production & Operations?**
 
-## 🎯 Use Cases
+- [docs/FEATURES.md](docs/FEATURES.md) — All 12 capabilities with options
+- [docs/PERFORMANCE.md](docs/PERFORMANCE.md) — Benchmarks, optimization, multiprocessing
+- [docs/HIPAA_COMPLIANCE.md](docs/HIPAA_COMPLIANCE.md) — Privacy controls, encryption, audit logs
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Docker, Kubernetes, monitoring
 
-- **Healthcare Analytics:** De-identified data for population health studies
-- **ML Model Training:** Clean, structured datasets for predictive models
-- **Clinical Research:** Privacy-compliant data sharing across institutions
-- **EHR Integration:** Automated ingestion of scanned legacy reports
-- **Regulatory Compliance:** HIPAA/GDPR-ready anonymization workflows
+---
 
-***
+## 🔧 Key Capabilities
 
-## 🐛 Troubleshooting
+✅ **OCR Processing** — Extract text from 300+ DPI scanned PDFs  
+✅ **8 PII Patterns** — Redact names, IDs, addresses, phone, SSN, DOB, MRN, Facility  
+✅ **5 Metadata Fields** — Gestational age, demographics, findings, clinical notes  
+✅ **UUID De-ID** — Cryptographic mapping for authorized researchers  
+✅ **HIPAA Safe Harbor** — 100% compliant anonymization  
+✅ **Plugin Architecture** — Add new patterns/extractors in minutes  
+✅ **85%+ Test Coverage** — Unit + integration tests  
+✅ **Atomic Writes** — No corrupted outputs on failures
 
-<details>
-<summary><b>OCR returns empty text</b></summary>
+See [docs/FEATURES.md](docs/FEATURES.md) for complete feature list with options.
 
-- Check PDF DPI (minimum 300 DPI recommended)
-- Verify Tesseract installation: `tesseract --version`
-- Ensure Poppler path is correctly configured
-</details>
-
-<details>
-<summary><b>Import errors</b></summary>
-
-- Run `pip install -r requirements.txt`
-- Verify Python version: `python --version` (must be 3.10+)
-</details>
-
-<details>
-<summary><b>Anonymization missed PII</b></summary>
-
-- Update regex patterns in `src/anonymizer.py`
-- Test patterns at [Regex101.com](https://regex101.com/)
-- Add validation checks in `main.py`
-</details>
-
-***
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! This project is beginner-friendly and a great entry point into **healthcare AI** and **ETL systems**.[2]
+Found a bug? Want to add a PII pattern? Need a new metadata field?
 
-### How to Contribute
+- **Add a PII Pattern** (5 min): See [CONTRIBUTING.md](CONTRIBUTING.md#adding-pii-patterns)
+- **Add a Metadata Extractor** (30 min): See [CONTRIBUTING.md](CONTRIBUTING.md#adding-extractors)
+- **Report Issues**: [GitHub Issues](https://github.com/GunaPalanivel/Medical-Report-ETL-System/issues)
+- **Security Vulnerabilities**: See [SECURITY.md](SECURITY.md)
 
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/improved-ocr`
-3. **Commit** changes: `git commit -m "Add multilingual OCR support"`
-4. **Push** to branch: `git push origin feature/improved-ocr`
-5. **Open** a Pull Request
+---
 
-### Areas for Improvement
+## 📝 License
 
-- 🔍 Better regex patterns for edge cases
-- ⚡ GPU-accelerated OCR (Tesseract + CUDA)
-- 🌐 Multi-language support (non-English reports)
-- 📊 Data quality metrics dashboard
-- 🧪 Comprehensive unit/integration tests
-
-***
+[MIT License](LICENSE) — Use freely in your healthcare organization.
 
 ## 🙏 Acknowledgments
 
-- [Tesseract OCR](https://tesseract-ocr.github.io/) — Open-source OCR engine
-- [PyPDF2 Community](https://pypdf2.readthedocs.io/) — PDF processing library
-- [FPDF Documentation](https://pyfpdf.readthedocs.io/) — PDF generation tools
-- Healthcare AI community for domain insights
-
-</div>
+Built for the HIPAA-Era Healthcare Data Sharing Initiative. Inspired by real-world privacy challenges in clinical research.
