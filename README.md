@@ -156,6 +156,19 @@ Medical-Report-ETL-System/
 
 ---
 
+## Architecture & Design
+
+The system follows a modular **ETL Pipeline** architecture with clear separation of concerns.
+
+- **Orchestrator**: `src/pipeline/orchestrator.py` manages the flow of data through stages.
+- **Stages**: Independent processing units (OCR, Anonymization, Extraction, Output).
+- **Strategy Pattern**: used for variable metadata extraction logic.
+
+For a deep dive into the code flow, class diagrams, and implementation details, see **[Feature Analysis](docs/FEATURE_ANALYSIS.md)**.
+
+
+---
+
 ## Current Limitations
 
 > **Note:** This is v1.1.1 — a working baseline with known limitations.

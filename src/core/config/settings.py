@@ -18,6 +18,7 @@ class Settings:
     id_map_file: str
     log_level: str
     log_file: str
+    max_workers: int
 
     @classmethod
     def load(cls, env_path: Optional[str] = None) -> "Settings":
@@ -40,4 +41,5 @@ class Settings:
             id_map_file=os.getenv("ID_MAP_FILE", str(data_dir / "id_map.json")),
             log_level=os.getenv("LOG_LEVEL", "INFO"),
             log_file=os.getenv("LOG_FILE", str(base_dir / "logs" / "pipeline.log")),
+            max_workers=int(os.getenv("MAX_WORKERS", os.cpu_count() - 1 or 1)),
         )

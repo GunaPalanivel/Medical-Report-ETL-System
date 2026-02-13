@@ -280,3 +280,17 @@ Configuration is managed via environment variables (see `.env.example`):
 - **Setup:** See [SETUP.md](SETUP.md)
 - **Add features:** See [CONTRIBUTING.md](../CONTRIBUTING.md)
 - **Future plans:** See [ROADMAP.md](ROADMAP.md)
+
+---
+
+## Internal Implementation Details
+
+For developers contributing to the codebase, a deep dive into the architecture, class hierarchy, and execution flow is available in:
+
+👉 **[Feature Analysis](FEATURE_ANALYSIS.md)**
+
+This document covers:
+- Pipeline orchestration logic
+- Detailed class responsibilities
+- Data flow diagrams
+- Known technical debts and improvement opportunities

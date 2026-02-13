@@ -69,7 +69,13 @@ def main() -> int:
 
     logger.info("Processing %s PDF files", len(pdf_files))
     pipeline = build_pipeline(settings)
-    results = pipeline.run_batch(pdf_files, settings.json_output)
+    
+    if settings.max_workers > 1:
+        logger.info(f"Running in parallel mode with {settings.max_workers} workers")
+        results = pipeline.run_batch_parallel(pdf_files, settings.json_output, settings.max_workers)
+    else:
+        logger.info("Running in sequential mode")
+        results = pipeline.run_batch(pdf_files, settings.json_output)
 
     successes = sum(1 for item in results if not item.has_errors())
     failures = len(results) - successes
