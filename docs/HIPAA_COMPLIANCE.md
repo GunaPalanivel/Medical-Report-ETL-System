@@ -30,22 +30,23 @@ HIPAA Safe Harbor (45 CFR 164.514(b)) allows de-identification by removing 18 di
 
 **4 Patterns Implemented:**
 
-| #   | Identifier     | Regex Pattern                | Status         |
-| --- | -------------- | ---------------------------- | -------------- |
-| 1   | Patient Name   | `Patient Name[:\s]+[\w\s]+`  | ✅ Implemented |
-| 2   | Patient ID     | `Patient ID[:\s]+\w+`        | ✅ Implemented |
-| 3   | Hospital Name  | `Hospital Name[:\s]+[\w\s]+` | ✅ Implemented |
-| 4   | Clinician Name | `Clinician[:\s]+[\w\s]+`     | ✅ Implemented |
+| #   | Identifier     | Regex Pattern                               | Status         |
+| --- | -------------- | ------------------------------------------- | -------------- |
+| 1   | Patient Name   | `Patient Name[:\s]+[A-Za-z][A-Za-z\s]+`     | ✅ Implemented |
+| 2   | Patient ID     | `Patient ID[:\s]+[A-Za-z0-9][A-Za-z0-9_-]*` | ✅ Implemented |
+| 3   | Hospital Name  | `Hospital Name[:\s]+[A-Za-z][A-Za-z\s]+`    | ✅ Implemented |
+| 4   | Clinician Name | `Clinician[:\s]+[A-Za-z][A-Za-z\s]+`        | ✅ Implemented |
 
-**Implementation:** [src/anonymizer.py](../src/anonymizer.py)
+**Implementation:** [src/features/anonymization/pii_patterns.py](../src/features/anonymization/pii_patterns.py)
 
 ```python
-from src import anonymize_text
+from src.features.anonymization import PIIRedactor, build_default_registry
 
-# Example
+registry = build_default_registry()
+redactor = PIIRedactor(registry.get_all())
+
 text = "Patient Name: John Doe, Patient ID: 12345"
-anonymized = anonymize_text(text)
-# Result: "Patient Name: [ANONYMIZED], Patient ID: [ANONYMIZED]"
+anonymized = redactor.redact(text)
 ```
 
 ### Planned Additional Patterns

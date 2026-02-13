@@ -42,8 +42,11 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Configure paths in src/pdf_handler.py for your system
-# Edit POPPLER_PATH and tesseract_cmd
+# 4. Configure environment settings
+copy .env.example .env  # Windows
+# cp .env.example .env  # macOS/Linux
+
+# Update POPPLER_PATH and TESSERACT_PATH in .env
 
 # 5. Verify setup
 python main.py
@@ -75,34 +78,42 @@ python main.py
 
 The easiest way to contribute! Add a new regex pattern to redact additional PHI.
 
-### Step 1: Edit anonymizer.py
+### Step 1: Edit the PII registry
 
-Open `src/anonymizer.py` and add your pattern:
+Open `src/features/anonymization/pii_patterns.py` and add your pattern:
 
 ```python
-def anonymize_text(text):
-    """Anonymize PII fields in extracted text."""
-    # Existing patterns
-    text = re.sub(r"Patient Name[:\s]+[\w\s]+", "Patient Name: [ANONYMIZED]", text)
-    text = re.sub(r"Patient ID[:\s]+\w+", "Patient ID: [ANONYMIZED]", text)
-    text = re.sub(r"Hospital Name[:\s]+[\w\s]+", "Hospital Name: [ANONYMIZED]", text)
-    text = re.sub(r"Clinician[:\s]+[\w\s]+", "Clinician: [ANONYMIZED]", text)
+registry = PIIPatternRegistry()
+registry.register(
+    PIIPattern(
+        name="patient_name",
+        regex=r"Patient Name[:\s]+[A-Za-z][A-Za-z\s]+",
+        replacement="Patient Name: [ANONYMIZED]",
+        priority=10,
+    )
+)
 
-    # ADD YOUR NEW PATTERN HERE
-    # Example: Redact phone numbers
-    text = re.sub(r"\b\d{3}[-.]?\d{3}[-.]?\d{4}\b", "[PHONE REDACTED]", text)
-
-    return text
+# ADD YOUR NEW PATTERN HERE
+registry.register(
+    PIIPattern(
+        name="phone",
+        regex=r"\b\d{3}[-.]?\d{3}[-.]?\d{4}\b",
+        replacement="[PHONE REDACTED]",
+        priority=50,
+    )
+)
 ```
 
 ### Step 2: Test Your Pattern
 
 ```python
 # Quick test
-from src.anonymizer import anonymize_text
+from src.features.anonymization import PIIRedactor, build_default_registry
 
+registry = build_default_registry()
+redactor = PIIRedactor(registry.get_all())
 test_text = "Call 555-123-4567 for results"
-result = anonymize_text(test_text)
+result = redactor.redact(test_text)
 print(result)  # Should show: "Call [PHONE REDACTED] for results"
 ```
 
@@ -110,8 +121,8 @@ print(result)  # Should show: "Call [PHONE REDACTED] for results"
 
 ```bash
 git checkout -b feature/add-phone-pattern
-git add src/anonymizer.py
-git commit -m "feat(anonymizer): add phone number PII pattern"
+git add src/features/anonymization/pii_patterns.py
+git commit -m "feat(anonymization): add phone number PII pattern"
 git push origin feature/add-phone-pattern
 ```
 
@@ -131,49 +142,43 @@ git push origin feature/add-phone-pattern
 
 Add extraction for a new clinical field from report text.
 
-### Step 1: Edit extractor.py
+### Step 1: Add a new extractor
 
-Open `src/extractor.py` and add your extraction logic:
-
-```python
-def extract_metadata(text):
-    """Extract structured metadata from anonymized text."""
-    metadata = {}
-
-    # Existing extractions...
-
-    # ADD YOUR NEW FIELD HERE
-    # Example: Extract blood pressure
-    bp_match = re.search(r"BP[:\s]*(\d{2,3})/(\d{2,3})", text)
-    if bp_match:
-        metadata["blood_pressure"] = {
-            "systolic": int(bp_match.group(1)),
-            "diastolic": int(bp_match.group(2))
-        }
-
-    return metadata
-```
-
-### Step 2: Update JSON Writer (Optional)
-
-If the field needs special formatting, update `src/json_writer.py`:
+Create a new extractor in `src/features/metadata/extractors/`:
 
 ```python
-def save_metadata_json(metadata_list, output_path):
-    # Add your field to the output schema
-    formatted["dataResources"].append({
-        # existing fields...
-        "blood_pressure": entry.get("blood_pressure"),
-    })
+from src.features.metadata.extractors.base import BaseExtractor
+
+
+class BloodPressureExtractor(BaseExtractor):
+    @property
+    def field_name(self) -> str:
+        return "blood_pressure"
+
+    def extract(self, text: str):
+        match = re.search(r"BP[:\s]*(\d{2,3})/(\d{2,3})", text)
+        if match:
+            return {
+                "systolic": int(match.group(1)),
+                "diastolic": int(match.group(2)),
+            }
+        return None
+
+    def validate(self, value: object) -> bool:
+        return isinstance(value, dict)
 ```
+
+### Step 2: Register the extractor
+
+Add the extractor in `src/features/metadata/extractor.py` where the list is built.
 
 ### Step 3: Test and Submit
 
 ```bash
 python main.py  # Verify it extracts correctly
 git checkout -b feature/add-blood-pressure-field
-git add src/extractor.py src/json_writer.py
-git commit -m "feat(extractor): add blood pressure metadata extraction"
+git add src/features/metadata/extractors/blood_pressure.py src/features/metadata/extractor.py
+git commit -m "feat(metadata): add blood pressure extractor"
 git push origin feature/add-blood-pressure-field
 ```
 
@@ -292,10 +297,13 @@ def extract_metadata(text):
 ```
 src/
 ├── __init__.py      # Package exports (update when adding public functions)
-├── pdf_handler.py   # OCR + PDF writing
-├── anonymizer.py    # PII redaction patterns
-├── extractor.py     # Metadata field extraction
-└── json_writer.py   # JSON output formatting
+├── core/            # Settings, logging, exceptions, utils
+├── features/        # OCR, anonymization, metadata, output
+├── pipeline/        # Stage orchestration
+├── pdf_handler.py   # Backward-compatible facade
+├── anonymizer.py    # Backward-compatible facade
+├── extractor.py     # Backward-compatible facade
+└── json_writer.py   # Backward-compatible facade
 ```
 
 ---

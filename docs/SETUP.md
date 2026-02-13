@@ -88,18 +88,20 @@ pip install -r requirements.txt
 
 ### Step 4: Configure System Paths
 
-> **Important:** You must edit the paths in `src/pdf_handler.py` to match your system.
+> **Important:** Configure paths via environment variables.
 
-Open `src/pdf_handler.py` and update these lines:
+Copy the example env file:
 
-```python
-# Windows example:
-POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+```bash
+copy .env.example .env  # Windows
+# cp .env.example .env  # macOS/Linux
+```
 
-# Linux example:
-POPPLER_PATH = "/usr/bin"
-# pytesseract will auto-detect if tesseract is in PATH
+Update `.env` with your paths:
+
+```ini
+POPPLER_PATH=C:\poppler-24.08.0\Library\bin
+TESSERACT_PATH=C:\Program Files\Tesseract-OCR\tesseract.exe
 ```
 
 ### Step 5: Verify Installation
@@ -113,6 +115,17 @@ python -c "import pytesseract; print('Tesseract OK')"
 
 # Test PDF processing
 python -c "from pdf2image import convert_from_path; print('PDF2Image OK')"
+```
+
+### Optional: Integration Tests
+
+Integration tests are skipped by default because they run OCR on real PDFs.
+
+```bash
+set RUN_INTEGRATION_TESTS=1  # Windows (PowerShell)
+# export RUN_INTEGRATION_TESTS=1  # macOS/Linux
+
+pytest tests/integration/test_pipeline_integration.py -v
 ```
 
 ---
@@ -170,17 +183,22 @@ cat data/id_map.json
 Medical-Report-ETL-System/
 ├── main.py                     # Entry point
 ├── requirements.txt            # Dependencies
+├── .env.example                 # Environment template
 ├── src/
 │   ├── __init__.py             # Package exports
-│   ├── pdf_handler.py          # OCR + PDF generation (EDIT PATHS HERE)
-│   ├── anonymizer.py           # PII redaction
-│   ├── extractor.py            # Metadata extraction
-│   └── json_writer.py          # JSON output
+│   ├── core/                   # Settings, logging, utils, exceptions
+│   ├── features/               # OCR, anonymization, metadata, output
+│   ├── pipeline/               # Stage orchestration
+│   ├── pdf_handler.py          # Backward-compatible facade
+│   ├── anonymizer.py           # Backward-compatible facade
+│   ├── extractor.py            # Backward-compatible facade
+│   └── json_writer.py          # Backward-compatible facade
 ├── data/
 │   ├── raw_reports/            # Input: your PDFs go here
 │   ├── anonymized_reports/     # Output: redacted PDFs
 │   ├── patient_metadata.json   # Output: extracted data
 │   └── id_map.json             # Output: UUID mapping (sensitive!)
+├── tests/                       # Unit + integration tests
 └── docs/                       # Documentation
 ```
 
@@ -192,11 +210,10 @@ Medical-Report-ETL-System/
 
 **Cause:** Tesseract path not configured correctly.
 
-**Solution:** Edit `src/pdf_handler.py`:
+**Solution:** Update `.env`:
 
-```python
-# Update to your actual path
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+```ini
+TESSERACT_PATH=C:\Program Files\Tesseract-OCR\tesseract.exe
 ```
 
 **Verify:**
@@ -209,11 +226,10 @@ python -c "import pytesseract; pytesseract.pytesseract.tesseract_cmd = r'C:\Prog
 
 **Cause:** Poppler path not configured.
 
-**Solution:** Edit `src/pdf_handler.py`:
+**Solution:** Update `.env`:
 
-```python
-# Update to your actual path
-POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
+```ini
+POPPLER_PATH=C:\poppler-24.08.0\Library\bin
 ```
 
 **Verify:**
@@ -262,23 +278,22 @@ data/raw_reports/*.pdf
         │
         ▼
 ┌──────────────────────┐
-│  read_pdf_text()     │  OCR at 300 DPI
-│  (pdf_handler.py)    │
+│  OCRStage            │  OCR at 300 DPI
+│  (features/ocr)      │
 └──────────┬───────────┘
            │
            ▼
 ┌──────────────────────┐
-│  anonymize_text()    │  4 PII patterns replaced
-│  (anonymizer.py)     │
+│  AnonymizationStage  │  4 PII patterns replaced
+│  (features/anonymization) │
 └──────────┬───────────┘
            │
      ┌─────┴─────┐
      │           │
      ▼           ▼
 ┌─────────┐  ┌───────────────┐
-│write_   │  │extract_       │
-│anonymized│ │metadata()     │
-│_pdf()   │  │(extractor.py) │
+│Output   │  │Extraction     │
+│Stage    │  │Stage          │
 └────┬────┘  └───────┬───────┘
      │               │
      ▼               ▼

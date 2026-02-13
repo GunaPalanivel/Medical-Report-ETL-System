@@ -138,13 +138,13 @@ tmp/
 # ============================================================================
 
 # Raw PDF inputs (keep local for development)
-# data/raw_reports/*.pdf
+data/raw_reports/*.pdf
 
 # Anonymized outputs (can regenerate)
 data/anonymized_reports/*.pdf
 
 # Generated metadata (can regenerate)
-# data/patient_metadata.json
+data/patient_metadata.json
 
 # ============================================================================
 # PROJECT-SPECIFIC

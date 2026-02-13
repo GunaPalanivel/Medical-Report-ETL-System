@@ -10,12 +10,15 @@
 
 **What it does:** Extracts text from scanned PDF files using Tesseract OCR at 300 DPI.
 
-**Implementation:** [src/pdf_handler.py](../src/pdf_handler.py)
+**Implementation:** [src/features/ocr/engine.py](../src/features/ocr/engine.py)
 
 ```python
-from src import read_pdf_text
+from src.core import Settings
+from src.features.ocr import OCREngine, load_ocr_config
 
-text = read_pdf_text("path/to/report.pdf")
+settings = Settings.load()
+engine = OCREngine(load_ocr_config(settings))
+text = engine.extract_text("path/to/report.pdf")
 ```
 
 **Technical details:**
@@ -37,22 +40,24 @@ text = read_pdf_text("path/to/report.pdf")
 
 **What it does:** Redacts patient identifiers from extracted text using regex patterns.
 
-**Implementation:** [src/anonymizer.py](../src/anonymizer.py)
+**Implementation:** [src/features/anonymization](../src/features/anonymization)
 
 ```python
-from src import anonymize_text
+from src.features.anonymization import PIIRedactor, build_default_registry
 
-anonymized = anonymize_text(raw_text)
+registry = build_default_registry()
+redactor = PIIRedactor(registry.get_all())
+anonymized = redactor.redact(raw_text)
 ```
 
 **Current patterns:**
 
-| Field         | Pattern                      | Replacement                   |
-| ------------- | ---------------------------- | ----------------------------- |
-| Patient Name  | `Patient Name[:\s]+[\w\s]+`  | `Patient Name: [ANONYMIZED]`  |
-| Patient ID    | `Patient ID[:\s]+\w+`        | `Patient ID: [ANONYMIZED]`    |
-| Hospital Name | `Hospital Name[:\s]+[\w\s]+` | `Hospital Name: [ANONYMIZED]` |
-| Clinician     | `Clinician[:\s]+[\w\s]+`     | `Clinician: [ANONYMIZED]`     |
+| Field         | Pattern                                     | Replacement                   |
+| ------------- | ------------------------------------------- | ----------------------------- |
+| Patient Name  | `Patient Name[:\s]+[A-Za-z][A-Za-z\s]+`     | `Patient Name: [ANONYMIZED]`  |
+| Patient ID    | `Patient ID[:\s]+[A-Za-z0-9][A-Za-z0-9_-]*` | `Patient ID: [ANONYMIZED]`    |
+| Hospital Name | `Hospital Name[:\s]+[A-Za-z][A-Za-z\s]+`    | `Hospital Name: [ANONYMIZED]` |
+| Clinician     | `Clinician[:\s]+[A-Za-z][A-Za-z\s]+`        | `Clinician: [ANONYMIZED]`     |
 
 **Example:**
 
@@ -69,12 +74,21 @@ Output: "Patient Name: [ANONYMIZED], Patient ID: [ANONYMIZED]"
 
 **What it does:** Parses clinical information from anonymized report text.
 
-**Implementation:** [src/extractor.py](../src/extractor.py)
+**Implementation:** [src/features/metadata/extractor.py](../src/features/metadata/extractor.py)
 
 ```python
-from src import extract_metadata
+from src.features.metadata import (
+  AgeExtractor,
+  BMIExtractor,
+  FindingsExtractor,
+  GestationalAgeExtractor,
+  MetadataExtractor,
+)
 
-metadata = extract_metadata(anonymized_text)
+extractor = MetadataExtractor(
+  [GestationalAgeExtractor(), AgeExtractor(), BMIExtractor(), FindingsExtractor()]
+)
+metadata = extractor.extract_all(anonymized_text)
 ```
 
 **Fields extracted:**
@@ -99,27 +113,28 @@ metadata = extract_metadata(anonymized_text)
 }
 ```
 
+**Compatibility note:** JSON output also includes aliases `demographic_age` and `examination_findings`.
+
 ---
 
 ### 4. Anonymized PDF Generation
 
 **What it does:** Creates a new PDF with anonymized text content.
 
-**Implementation:** [src/pdf_handler.py](../src/pdf_handler.py)
+**Implementation:** [src/features/output/pdf_generator.py](../src/features/output/pdf_generator.py)
 
 ```python
-from src import write_anonymized_pdf
+from src.features.output import PDFGenerator
 
-write_anonymized_pdf(
-    original_path="input.pdf",
-    output_path="output.pdf",
-    anonymized_text="[ANONYMIZED] content..."
+PDFGenerator().generate(
+  anonymized_text="[ANONYMIZED] content...",
+  output_path="output.pdf",
 )
 ```
 
 **Technical details:**
 
-- Uses `fpdf2` to generate new PDFs
+- Uses `fpdf` to generate new PDFs
 - Preserves text content with anonymized values
 - Sanitizes non-Latin characters
 - Creates single-font, text-based output
@@ -130,12 +145,12 @@ write_anonymized_pdf(
 
 **What it does:** Saves extracted metadata to structured JSON file.
 
-**Implementation:** [src/json_writer.py](../src/json_writer.py)
+**Implementation:** [src/features/output/json_serializer.py](../src/features/output/json_serializer.py)
 
 ```python
-from src import save_metadata_json
+from src.features.output import JSONSerializer
 
-save_metadata_json(metadata_list, "data/patient_metadata.json")
+JSONSerializer().serialize(metadata_list, "data/patient_metadata.json")
 ```
 
 **Output schema:**
@@ -146,8 +161,10 @@ save_metadata_json(metadata_list, "data/patient_metadata.json")
     {
       "patient_id": "550e8400-e29b-41d4-a716-446655440000",
       "gestational_age": "40 weeks",
+      "age": 32,
       "demographic_age": 32,
       "BMI": 28.5,
+      "findings": ["Finding 1", "Finding 2"],
       "examination_findings": ["Finding 1", "Finding 2"]
     }
   ]
@@ -160,7 +177,7 @@ save_metadata_json(metadata_list, "data/patient_metadata.json")
 
 **What it does:** Maps original filenames to random UUIDs for privacy.
 
-**Implementation:** [main.py](../main.py) (uses Python `uuid` module)
+**Implementation:** [src/features/anonymization/uuid_service.py](../src/features/anonymization/uuid_service.py)
 
 **How it works:**
 
@@ -186,7 +203,7 @@ save_metadata_json(metadata_list, "data/patient_metadata.json")
 
 **What it does:** Continues processing when individual files fail, tracks results.
 
-**Implementation:** [main.py](../main.py)
+**Implementation:** [src/pipeline/orchestrator.py](../src/pipeline/orchestrator.py)
 
 **Features (added in v1.1.0):**
 
@@ -216,15 +233,15 @@ Processing: report_003.pdf
 
 ## Feature Matrix
 
-| Feature                        | Status         | Location             |
-| ------------------------------ | -------------- | -------------------- |
-| OCR Text Extraction            | ✅ Implemented | `src/pdf_handler.py` |
-| PII Anonymization (4 patterns) | ✅ Implemented | `src/anonymizer.py`  |
-| Metadata Extraction (5 fields) | ✅ Implemented | `src/extractor.py`   |
-| Anonymized PDF Generation      | ✅ Implemented | `src/pdf_handler.py` |
-| JSON Metadata Export           | ✅ Implemented | `src/json_writer.py` |
-| UUID De-identification         | ✅ Implemented | `main.py`            |
-| Error Handling                 | ✅ Implemented | `main.py`            |
+| Feature                        | Status         | Location                     |
+| ------------------------------ | -------------- | ---------------------------- |
+| OCR Text Extraction            | ✅ Implemented | `src/features/ocr`           |
+| PII Anonymization (4 patterns) | ✅ Implemented | `src/features/anonymization` |
+| Metadata Extraction (5 fields) | ✅ Implemented | `src/features/metadata`      |
+| Anonymized PDF Generation      | ✅ Implemented | `src/features/output`        |
+| JSON Metadata Export           | ✅ Implemented | `src/features/output`        |
+| UUID De-identification         | ✅ Implemented | `src/features/anonymization` |
+| Error Handling                 | ✅ Implemented | `src/pipeline`               |
 
 ---
 
@@ -244,17 +261,17 @@ See [ROADMAP.md](ROADMAP.md) for planned improvements including:
 
 ## Configuration
 
-Currently, configuration is done by editing source files directly:
+Configuration is managed via environment variables (see `.env.example`):
 
-| Setting          | Location             | Default                                        |
-| ---------------- | -------------------- | ---------------------------------------------- |
-| Poppler path     | `src/pdf_handler.py` | `C:\poppler-24.08.0\Library\bin`               |
-| Tesseract path   | `src/pdf_handler.py` | `C:\Program Files\Tesseract-OCR\tesseract.exe` |
-| OCR DPI          | `src/pdf_handler.py` | `300`                                          |
-| Input directory  | `main.py`            | `data/raw_reports`                             |
-| Output directory | `main.py`            | `data/anonymized_reports`                      |
+| Setting          | Location | Default                                        |
+| ---------------- | -------- | ---------------------------------------------- |
+| Poppler path     | `.env`   | `C:\poppler-24.08.0\Library\bin`               |
+| Tesseract path   | `.env`   | `C:\Program Files\Tesseract-OCR\tesseract.exe` |
+| OCR DPI          | `.env`   | `300`                                          |
+| Input directory  | `.env`   | `data/raw_reports`                             |
+| Output directory | `.env`   | `data/anonymized_reports`                      |
 
-**Planned:** Environment variable configuration (see [ROADMAP.md](ROADMAP.md))
+**Note:** You can override any value with environment variables at runtime.
 
 ---
 

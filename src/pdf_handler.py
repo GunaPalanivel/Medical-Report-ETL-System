@@ -1,45 +1,31 @@
-from pdf2image import convert_from_path
-from fpdf import FPDF
-import pytesseract
-import os
+import warnings
 
-# Poppler path
-POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
+from src.core import Settings
+from src.features.ocr import OCREngine, load_ocr_config
+from src.features.output import PDFGenerator
 
 
-# path
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+_settings = Settings.load()
+_ocr_engine = OCREngine(load_ocr_config(_settings))
+_pdf_generator = PDFGenerator()
+
 
 def write_anonymized_pdf(original_path, output_path, anonymized_text):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    def sanitize(text):
-        # Replace em dash and any non-latin1 characters
-        return text.encode("latin-1", errors="replace").decode("latin-1")
-
-    for line in anonymized_text.split("\n"):
-        sanitized_line = sanitize(line)
-        pdf.multi_cell(0, 10, sanitized_line)
-
-    pdf.output(output_path)
-    print(f"✅ Saved anonymized report to {output_path}")
-
+    """Backward-compatible wrapper for PDF generation."""
+    warnings.warn(
+        "write_anonymized_pdf is deprecated; use PDFGenerator from src.features.output",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    _pdf_generator.generate(anonymized_text, output_path)
 
 
 def read_pdf_text(pdf_path):
-    """
-    Extracts text from scanned PDFs using OCR (Tesseract).
-    """
-    text = ""
-    images = convert_from_path(pdf_path, dpi=300, poppler_path=POPPLER_PATH)
-
-
-    for i, img in enumerate(images):
-        page_text = pytesseract.image_to_string(img)
-        text += page_text + "\n"
-    
-    return text
+    """Backward-compatible wrapper for OCR text extraction."""
+    warnings.warn(
+        "read_pdf_text is deprecated; use OCREngine from src.features.ocr",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _ocr_engine.extract_text(pdf_path)
 

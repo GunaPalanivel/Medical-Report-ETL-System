@@ -1,140 +1,100 @@
-import os
 import sys
-import pytesseract
-import uuid
-import json
 import traceback
-from pathlib import Path
-from src.anonymizer import anonymize_text
-from src.extractor import extract_metadata
-from src.json_writer import save_metadata_json
-from src.pdf_handler import read_pdf_text, write_anonymized_pdf
 
-# Windows-specific path for tesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+from src.core import Settings, configure_logging, ensure_directory, get_pdf_files
+from src.features.anonymization import (
+    PIIRedactor,
+    RedactionValidator,
+    UUIDMappingService,
+    build_default_registry,
+)
+from src.features.metadata import (
+    AgeExtractor,
+    BMIExtractor,
+    FindingsExtractor,
+    GestationalAgeExtractor,
+    MetadataExtractor,
+)
+from src.features.ocr import OCREngine, load_ocr_config
+from src.features.output import JSONSerializer, PDFGenerator
+from src.pipeline import (
+    AnonymizationStage,
+    ETLPipeline,
+    ExtractionStage,
+    OCRStage,
+    OutputStage,
+)
 
-# Constants
-ID_MAP_FILE = Path("data/id_map.json")
 
-# Load or initialize the secure ID map
-if ID_MAP_FILE.exists():
-    with open(ID_MAP_FILE, "r") as f:
-        id_map = json.load(f)
-else:
-    id_map = {}
+def build_pipeline(settings: Settings) -> ETLPipeline:
+    ocr_config = load_ocr_config(settings)
+    ocr_engine = OCREngine(ocr_config)
 
-def process_reports(input_folder, output_folder, json_output_file):
-    """Process all PDF reports with per-file error handling."""
-    metadata_list = []
-    results = {'success': 0, 'errors': 0, 'failed_files': []}
+    registry = build_default_registry()
+    patterns = registry.get_all()
+    redactor = PIIRedactor(patterns)
+    validator = RedactionValidator(patterns)
 
-    # Validate input folder
-    input_path = Path(input_folder)
-    if not input_path.exists():
-        raise ValueError(f"Input directory not found: {input_folder}")
-    
-    # Get PDF files
-    pdf_files = [f for f in os.listdir(input_folder) if f.endswith(".pdf")]
+    extractor = MetadataExtractor(
+        [
+            GestationalAgeExtractor(),
+            AgeExtractor(),
+            BMIExtractor(),
+            FindingsExtractor(),
+        ]
+    )
+
+    pdf_generator = PDFGenerator()
+    uuid_service = UUIDMappingService(settings.id_map_file)
+    json_serializer = JSONSerializer()
+
+    stages = [
+        OCRStage(ocr_engine),
+        AnonymizationStage(redactor, validator),
+        ExtractionStage(extractor),
+        OutputStage(pdf_generator, uuid_service, settings.output_dir),
+    ]
+
+    return ETLPipeline(stages, json_serializer)
+
+
+def main() -> int:
+    settings = Settings.load()
+    logger = configure_logging(settings.log_level, settings.log_file)
+
+    ensure_directory(settings.output_dir)
+    pdf_files = get_pdf_files(settings.input_dir)
     if not pdf_files:
-        raise ValueError(f"No PDF files found in {input_folder}")
-    
-    print(f"\n📋 Processing {len(pdf_files)} PDF files...\n")
+        raise ValueError(f"No PDF files found in {settings.input_dir}")
 
-    for filename in pdf_files:
-        file_path = os.path.join(input_folder, filename)
-        
-        try:
-            # Extract text with OCR
-            try:
-                text = read_pdf_text(file_path)
-            except Exception as e:
-                raise ValueError(f"OCR failed: {e}")
+    logger.info("Processing %s PDF files", len(pdf_files))
+    pipeline = build_pipeline(settings)
+    results = pipeline.run_batch(pdf_files, settings.json_output)
 
-            # Uncomment the following line to print the OCR text for debugging
-            # print(f"\n🧠 OCR TEXT for {filename}:\n{text}\n{'-'*60}")
+    successes = sum(1 for item in results if not item.has_errors())
+    failures = len(results) - successes
 
-            # Extract metadata
-            try:
-                metadata = extract_metadata(text)
-            except Exception as e:
-                raise ValueError(f"Metadata extraction failed: {e}")
+    print("=" * 60)
+    print("PROCESSING SUMMARY")
+    print("=" * 60)
+    print(f"Successfully processed: {successes} files")
+    print(f"Failed: {failures} files")
+    if failures:
+        print("\nFailed files:")
+        for context in results:
+            if context.has_errors():
+                print(f"  - {context.pdf_path}")
+                for error in context.errors:
+                    print(f"    * {error}")
+    print("=" * 60)
 
-            # Use the original file identifier (e.g., patient_10785) as real_id
-            real_id = filename.replace(".pdf", "")  # patient_10785
-
-            # Get or create anon UUID
-            if real_id not in id_map:
-                anon_id = str(uuid.uuid4())
-                id_map[real_id] = anon_id
-            else:
-                anon_id = id_map[real_id]
-
-            # Overwrite patient_id in metadata
-            metadata["patient_id"] = anon_id
-            metadata_list.append(metadata)
-
-            # Save anonymized PDF with UUID filename
-            try:
-                anonymized_text = anonymize_text(text)
-                anon_pdf_path = os.path.join(output_folder, f"{anon_id}.pdf")
-                write_anonymized_pdf(file_path, anon_pdf_path, anonymized_text)
-            except Exception as e:
-                raise ValueError(f"PDF generation failed: {e}")
-            
-            results['success'] += 1
-            print(f"✅ {filename} → {anon_id}.pdf")
-        
-        except Exception as e:
-            results['errors'] += 1
-            results['failed_files'].append(filename)
-            print(f"❌ Error processing {filename}: {e}", file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
-            continue  # Continue with next file
-
-    # Save updated secure ID map
-    try:
-        with open(ID_MAP_FILE, "w") as f:
-            json.dump(id_map, f, indent=4)
-    except Exception as e:
-        print(f"⚠️  Warning: Could not save ID map: {e}", file=sys.stderr)
-
-    # Save final metadata JSON (only successful extractions)
-    if metadata_list:
-        try:
-            save_metadata_json(metadata_list, json_output_file)
-            print(f"\n✅ Metadata JSON saved to: {json_output_file}")
-        except Exception as e:
-            print(f"❌ Error saving metadata JSON: {e}", file=sys.stderr)
-    
-    # Summary
-    print(f"\n{'='*60}")
-    print(f"📊 PROCESSING SUMMARY")
-    print(f"{'='*60}")
-    print(f"✅ Successfully processed: {results['success']} files")
-    print(f"❌ Failed: {results['errors']} files")
-    if results['failed_files']:
-        print(f"\nFailed files:")
-        for fname in results['failed_files']:
-            print(f"  - {fname}")
-    print(f"{'='*60}\n")
-    
-    return results
+    return 1 if failures else 0
 
 # Entry point
 if __name__ == "__main__":
     try:
-        raw_dir = "data/raw_reports"
-        anon_dir = "data/anonymized_reports"
-        json_file = "data/patient_metadata.json"
-
-        os.makedirs(anon_dir, exist_ok=True)
-        results = process_reports(raw_dir, anon_dir, json_file)
-        
-        # Exit with error code if any files failed
-        if results['errors'] > 0:
-            sys.exit(1)
-    
+        sys.exit(main())
     except Exception as e:
-        print(f"❌ Fatal error: {e}", file=sys.stderr)
+        print(f"Fatal error: {e}", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)

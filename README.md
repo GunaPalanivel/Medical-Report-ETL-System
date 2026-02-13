@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-1.1.1-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -45,11 +45,18 @@ pip install -r requirements.txt
 
 ### Configuration
 
-Edit paths in [src/pdf_handler.py](src/pdf_handler.py) to match your system:
+Copy the example environment file and edit paths to match your system:
 
-```python
-POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"  # Update this
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"  # Update this
+```bash
+copy .env.example .env  # Windows
+# cp .env.example .env  # macOS/Linux
+```
+
+Update values in `.env`:
+
+```ini
+POPPLER_PATH=C:\poppler-24.08.0\Library\bin
+TESSERACT_PATH=C:\Program Files\Tesseract-OCR\tesseract.exe
 ```
 
 ### Usage
@@ -72,69 +79,78 @@ python main.py
 
 ### PII Anonymization (4 Patterns)
 
-| Field         | Regex Pattern                | Replacement    |
-| ------------- | ---------------------------- | -------------- |
-| Patient Name  | `Patient Name[:\s]+[\w\s]+`  | `[ANONYMIZED]` |
-| Patient ID    | `Patient ID[:\s]+\w+`        | `[ANONYMIZED]` |
-| Hospital Name | `Hospital Name[:\s]+[\w\s]+` | `[ANONYMIZED]` |
-| Clinician     | `Clinician[:\s]+[\w\s]+`     | `[ANONYMIZED]` |
+| Field         | Regex Pattern                               | Replacement    |
+| ------------- | ------------------------------------------- | -------------- |
+| Patient Name  | `Patient Name[:\s]+[A-Za-z][A-Za-z\s]+`     | `[ANONYMIZED]` |
+| Patient ID    | `Patient ID[:\s]+[A-Za-z0-9][A-Za-z0-9_-]*` | `[ANONYMIZED]` |
+| Hospital Name | `Hospital Name[:\s]+[A-Za-z][A-Za-z\s]+`    | `[ANONYMIZED]` |
+| Clinician     | `Clinician[:\s]+[A-Za-z][A-Za-z\s]+`        | `[ANONYMIZED]` |
 
 ### Metadata Extraction (5 Fields)
 
 - `patient_id` — UUID (anonymized identifier)
 - `gestational_age` — Extracted from report text
-- `demographic_age` — Patient age
+- `age` — Patient age (exported as `demographic_age` for backward compatibility)
 - `BMI` — Body mass index
-- `examination_findings` — Clinical findings array
+- `findings` — Clinical findings array (exported as `examination_findings`)
 
 ### Processing Pipeline
 
 ```
 raw_reports/*.pdf
-       │
-       ▼
-┌─────────────────┐
-│  OCR (Tesseract)│  read_pdf_text() @ 300 DPI
-└────────┬────────┘
-         │ raw text
-         ▼
-┌─────────────────┐
-│   Anonymize     │  anonymize_text() - 4 PII patterns
-└────────┬────────┘
-         │ redacted text
-         ▼
-    ┌────┴────┐
-    │         │
-    ▼         ▼
-┌───────┐ ┌───────┐
-│Write  │ │Extract│  write_anonymized_pdf() / extract_metadata()
-│PDF    │ │Fields │
-└───┬───┘ └───┬───┘
-    │         │
-    ▼         ▼
-anonymized_   patient_
-reports/      metadata.json
+    │
+    ▼
+┌──────────────────────┐
+│ OCRStage (OCREngine) │
+└──────────┬───────────┘
+        │ extracted text
+        ▼
+┌─────────────────────────┐
+│ AnonymizationStage      │
+│ (PIIRedactor + Validator)│
+└──────────┬──────────────┘
+        │ redacted text
+        ▼
+┌─────────────────────────┐
+│ ExtractionStage         │
+│ (MetadataExtractor)     │
+└──────────┬──────────────┘
+        │ metadata
+        ▼
+┌─────────────────────────┐
+│ OutputStage             │
+│ (PDFGenerator + JSON)   │
+└──────────┬──────────────┘
+        │
+        ▼
+anonymized_reports/ + patient_metadata.json
 ```
 
 ---
 
-## Project Structure
+## Project Structure (v2.0.0)
 
 ```
 Medical-Report-ETL-System/
 ├── main.py                 # Entry point - orchestrates pipeline
 ├── requirements.txt        # Python dependencies
+├── .env.example             # Environment configuration template
 ├── src/
-│   ├── __init__.py         # Package exports
-│   ├── pdf_handler.py      # OCR text extraction + PDF writing
-│   ├── anonymizer.py       # PII redaction (4 patterns)
-│   ├── extractor.py        # Metadata field extraction
-│   └── json_writer.py      # JSON output formatting
+│   ├── core/               # Shared infrastructure (config, logging, utils)
+│   ├── features/           # Independent feature modules
+│   │   ├── ocr/            # OCR engine & adapters
+│   │   ├── anonymization/  # PII redaction & pattern registry
+│   │   ├── metadata/       # Metadata extractors & schema
+│   │   └── output/         # PDF generation & JSON serialization
+│   ├── pipeline/           # ETL orchestration & stage definitions
+│   │   ├── stages/         # Individual pipeline steps
+│   │   └── orchestrator.py # Pipeline runner
+│   └── __init__.py
 ├── data/
 │   ├── raw_reports/        # Input: scanned PDFs
 │   ├── anonymized_reports/ # Output: redacted PDFs
-│   ├── patient_metadata.json
-│   └── id_map.json         # UUID mapping (sensitive!)
+│   └── patient_metadata.json
+├── tests/                   # Comprehensive test suite (Unit + Integration)
 └── docs/                   # Documentation
 ```
 
@@ -144,13 +160,15 @@ Medical-Report-ETL-System/
 
 > **Note:** This is v1.1.1 — a working baseline with known limitations.
 
-| Limitation            | Impact                                     | Planned Fix                |
-| --------------------- | ------------------------------------------ | -------------------------- |
-| Hardcoded paths       | Must edit `pdf_handler.py` for each system | Environment variables      |
-| 4 PII patterns only   | May miss some PHI (SSN, DOB, phone, etc.)  | Expand to 8+ patterns      |
-| No tests              | Cannot verify changes safely               | Add pytest suite           |
-| Sequential processing | Slow for large batches                     | Multiprocessing            |
-| No encryption         | `id_map.json` stored in plaintext          | AES-256 at-rest encryption |
+| Limitation            | Impact                                    | Planned Fix                |
+| --------------------- | ----------------------------------------- | -------------------------- |
+| Limitation            | Impact                                    | Planned Fix                |
+| --------------------- | ----------------------------------------- | -------------------------- |
+| Limited config checks | Invalid paths fail at runtime             | Config validation (Improved in v2) |
+| 4 PII patterns        | May miss some PHI                         | Expand to 8+ patterns      |
+| Sequential processing | Slow for large batches                    | Multiprocessing (Planned for Phase 5) |
+| No encryption         | `id_map.json` stored in plaintext         | AES-256 at-rest encryption |
+| No encryption         | `id_map.json` stored in plaintext         | AES-256 at-rest encryption |
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for planned improvements.
 
@@ -160,6 +178,8 @@ See [docs/ROADMAP.md](docs/ROADMAP.md) for planned improvements.
 
 - [SETUP.md](docs/SETUP.md) — Detailed installation instructions
 - [FEATURES.md](docs/FEATURES.md) — Complete feature documentation
+- [DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md) — Metadata & ID mapping guide
+- [MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md) — Upgrade from v1.x to v2.0.0
 - [HIPAA_COMPLIANCE.md](docs/HIPAA_COMPLIANCE.md) — Privacy considerations
 - [ROADMAP.md](docs/ROADMAP.md) — Future development plans
 - [CHANGELOG.md](CHANGELOG.md) — Version history
@@ -172,8 +192,8 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 **Quick contributions:**
 
-- Add a PII pattern to `src/anonymizer.py`
-- Add a metadata field to `src/extractor.py`
+- Add a PII pattern to `src/features/anonymization/pii_patterns.py`
+- Add a metadata field to `src/features/metadata/extractors/`
 - Report issues via [GitHub Issues](https://github.com/GunaPalanivel/Medical-Report-ETL-System/issues)
 
 ---

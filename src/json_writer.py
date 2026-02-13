@@ -1,20 +1,16 @@
-import json
+import warnings
+
+from src.features.output import JSONSerializer
+
+
+_serializer = JSONSerializer()
+
 
 def save_metadata_json(metadata_list, output_path):
-    formatted = {
-        "dataResources": []
-    }
-
-    for entry in metadata_list:
-        formatted["dataResources"].append({
-            "patient_id": entry["patient_id"],
-            "gestational_age": entry.get("gestational_age"),
-            "demographic_age": entry.get("age"),
-            "BMI": entry.get("BMI"),
-            "examination_findings": entry.get("findings", [])
-        })
-
-    with open(output_path, "w") as f:
-        json.dump(formatted, f, indent=4)
-
-    print(f"✅ Saved metadata to {output_path}")
+    """Backward-compatible wrapper for JSON serialization."""
+    warnings.warn(
+        "save_metadata_json is deprecated; use JSONSerializer from src.features.output",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    _serializer.serialize(metadata_list, output_path)
