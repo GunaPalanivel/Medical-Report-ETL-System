@@ -2,7 +2,7 @@
 
 **Privacy considerations for the Medical Report ETL System.**
 
-> **Important:** This document describes privacy controls. Some features are implemented (✅), others are planned (⏳). See the status indicators throughout.
+> **Important:** This document describes privacy controls. For technical implementation details, see [FEATURE_ANALYSIS.md](FEATURE_ANALYSIS.md). Some features are implemented (✅), others are planned (⏳).
 
 ---
 

@@ -39,7 +39,7 @@ See [FEATURES.md](FEATURES.md) for complete documentation of current capabilitie
 
 ---
 
-## Phase 1 Goals (v2.0.0) — In Progress
+## Phase 1 Goals (v2.0.0) — Completed
 
 **Target: Modular architecture**
 
@@ -115,7 +115,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for how to help with roadmap items.
 | ------- | ------------------------- | ----------- |
 | 1.0.0   | Initial release           | Released    |
 | 1.1.0   | Bug fixes, error handling | Released    |
-| 1.1.1   | Documentation cleanup     | Current     |
+| 1.1.1   | Documentation cleanup     | Released    |
 | 1.2.0   | Expanded PII patterns     | Planned     |
-| 2.0.0   | Modular architecture      | In progress |
+| 2.0.0   | Modular architecture      | Current     |
 | 3.0.0   | Production deployment     | Future      |

@@ -200,6 +200,7 @@ Medical-Report-ETL-System/
 │   └── id_map.json             # Output: UUID mapping (sensitive!)
 ├── tests/                       # Unit + integration tests
 └── docs/                       # Documentation
+    ├── FEATURE_ANALYSIS.md     # Deep dive into architecture
 ```
 
 ---
@@ -307,5 +308,5 @@ reports/*.pdf       + id_map.json
 
 - **Setup complete?** Run `python main.py` with your PDFs
 - **Want to add PII patterns?** See [CONTRIBUTING.md](../CONTRIBUTING.md)
-- **Understand the features?** See [FEATURES.md](FEATURES.md)
+- **Understand the features?** See [FEATURES.md](FEATURES.md) or [FEATURE_ANALYSIS.md](FEATURE_ANALYSIS.md)
 - **Future plans?** See [ROADMAP.md](ROADMAP.md)

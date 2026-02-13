@@ -9,6 +9,8 @@ The v2.0.0 release introduces a modular architecture to improve maintainability,
 - **Pipeline**: Explicit pipeline stages (`OCRStage`, `AnonymizationStage`, etc.) replace the monolithic script.
 - **Plugin System**: PII patterns and Metadata extractors are now registered via plugins.
 
+For a detailed breakdown of the new architecture, see [FEATURE_ANALYSIS.md](FEATURE_ANALYSIS.md).
+
 ## 1. Upgrading Code
 
 ### If you use `main.py` directly:
