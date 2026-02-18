@@ -146,6 +146,8 @@ data/anonymized_reports/*.pdf
 # Generated metadata (can regenerate)
 data/patient_metadata.json
 
+tests/output/
+
 # ============================================================================
 # PROJECT-SPECIFIC
 # ============================================================================

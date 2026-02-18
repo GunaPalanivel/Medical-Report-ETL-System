@@ -4,7 +4,7 @@
 
 ---
 
-## Current State (v1.1.1)
+## Current State (v2.0.0)
 
 The system is a working ETL pipeline that:
 

@@ -33,10 +33,10 @@ def test_parallel_correctness():
     # But parallel run will overwrite anyway.
     # We focus on the returned objects first.
     
-    seq_results = pipeline.run_batch(valid_files, "temp_seq.json")
+    seq_results = pipeline.run_batch(valid_files, "tests/output/temp_seq.json")
     
     # 2. Run Parallel
-    par_results = pipeline.run_batch_parallel(valid_files, "temp_par.json", max_workers=2)
+    par_results = pipeline.run_batch_parallel(valid_files, "tests/output/temp_par.json", max_workers=2)
 
     # 3. Compare Results
     # Sort by pdf_path to handle out-of-order completion

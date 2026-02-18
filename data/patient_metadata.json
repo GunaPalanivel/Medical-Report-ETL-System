@@ -26,16 +26,16 @@
             ]
         },
         {
-            "patient_id": "63943db0-080d-4ba8-bec1-72630c27c82b",
+            "patient_id": "833c1c4a-db2b-4a9a-9ebd-d91bece79b52",
             "gestational_age": null,
-            "age": 35,
-            "demographic_age": 35,
-            "BMI": 26.0,
+            "age": 33,
+            "demographic_age": 33,
+            "BMI": 28.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
-                "Spine : Spina bifida found",
+                "Spine : No spina bifida",
                 "Abdominal wall: Normal",
                 "Urinary tract: Normal",
                 "Extremities: Hands and feet appear normal"
@@ -44,7 +44,7 @@
                 "Head : Normal skull apperance",
                 "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
-                "Spine : Spina bifida found",
+                "Spine : No spina bifida",
                 "Abdominal wall: Normal",
                 "Urinary tract: Normal",
                 "Extremities: Hands and feet appear normal"
@@ -76,16 +76,16 @@
             ]
         },
         {
-            "patient_id": "833c1c4a-db2b-4a9a-9ebd-d91bece79b52",
+            "patient_id": "63943db0-080d-4ba8-bec1-72630c27c82b",
             "gestational_age": null,
-            "age": 33,
-            "demographic_age": 33,
-            "BMI": 28.0,
+            "age": 35,
+            "demographic_age": 35,
+            "BMI": 26.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
+                "Spine : Spina bifida found",
                 "Abdominal wall: Normal",
                 "Urinary tract: Normal",
                 "Extremities: Hands and feet appear normal"
@@ -94,7 +94,7 @@
                 "Head : Normal skull apperance",
                 "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
+                "Spine : Spina bifida found",
                 "Abdominal wall: Normal",
                 "Urinary tract: Normal",
                 "Extremities: Hands and feet appear normal"
@@ -176,31 +176,6 @@
             ]
         },
         {
-            "patient_id": "d22f622b-d2fa-4cce-a4c5-50f6b72a79bc",
-            "gestational_age": null,
-            "age": 32,
-            "demographic_age": 32,
-            "BMI": 25.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
             "patient_id": "27fdaf8a-e8d7-4ffb-b34a-d4ae28c7fd90",
             "gestational_age": null,
             "age": 27,
@@ -276,11 +251,11 @@
             ]
         },
         {
-            "patient_id": "3e86b467-e553-4fd1-a6b1-3f2f354d83f6",
+            "patient_id": "d22f622b-d2fa-4cce-a4c5-50f6b72a79bc",
             "gestational_age": null,
-            "age": 34,
-            "demographic_age": 34,
-            "BMI": 32.0,
+            "age": 32,
+            "demographic_age": 32,
+            "BMI": 25.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain : No choroid plexus cyst seen",
@@ -326,36 +301,11 @@
             ]
         },
         {
-            "patient_id": "47a42a40-41b0-4470-bdbd-ce9d49098a58",
+            "patient_id": "3e86b467-e553-4fd1-a6b1-3f2f354d83f6",
             "gestational_age": null,
-            "age": 39,
-            "demographic_age": 39,
-            "BMI": 19.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "6184d58f-909f-4693-aea0-b6b69a5a711d",
-            "gestational_age": null,
-            "age": 39,
-            "demographic_age": 39,
-            "BMI": 27.0,
+            "age": 34,
+            "demographic_age": 34,
+            "BMI": 32.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain : No choroid plexus cyst seen",
@@ -401,31 +351,6 @@
             ]
         },
         {
-            "patient_id": "90f62800-fef2-47cb-8899-ecf96891723e",
-            "gestational_age": null,
-            "age": 23,
-            "demographic_age": 23,
-            "BMI": 33.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
             "patient_id": "c12e4955-8781-4b43-b6b2-ca9e43356181",
             "gestational_age": null,
             "age": 31,
@@ -451,6 +376,106 @@
             ]
         },
         {
+            "patient_id": "90f62800-fef2-47cb-8899-ecf96891723e",
+            "gestational_age": null,
+            "age": 23,
+            "demographic_age": 23,
+            "BMI": 33.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "6184d58f-909f-4693-aea0-b6b69a5a711d",
+            "gestational_age": null,
+            "age": 39,
+            "demographic_age": 39,
+            "BMI": 27.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "47a42a40-41b0-4470-bdbd-ce9d49098a58",
+            "gestational_age": null,
+            "age": 39,
+            "demographic_age": 39,
+            "BMI": 19.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "24c51f91-97e1-4348-b544-6af2ee9b2aac",
+            "gestational_age": null,
+            "age": 25,
+            "demographic_age": 25,
+            "BMI": 22.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
             "patient_id": "37dc8317-6338-4290-9b2d-453e6105c798",
             "gestational_age": null,
             "age": 28,
@@ -468,6 +493,31 @@
             "examination_findings": [
                 "Head : Normal skull apperance",
                 "Brain : Choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : Spina bifida found",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "adc55c03-3b91-47ee-b654-fcddcb141ba1",
+            "gestational_age": null,
+            "age": 24,
+            "demographic_age": 24,
+            "BMI": 29.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : Spina bifida found",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
                 "Spine : Spina bifida found",
                 "Abdominal wall: Normal",
@@ -526,36 +576,11 @@
             ]
         },
         {
-            "patient_id": "adc55c03-3b91-47ee-b654-fcddcb141ba1",
+            "patient_id": "275fca41-794e-4b82-ba73-651815e35b5c",
             "gestational_age": null,
-            "age": 24,
-            "demographic_age": 24,
-            "BMI": 29.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "24c51f91-97e1-4348-b544-6af2ee9b2aac",
-            "gestational_age": null,
-            "age": 25,
-            "demographic_age": 25,
-            "BMI": 22.0,
+            "age": 26,
+            "demographic_age": 26,
+            "BMI": 20.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain: \u2014 No choroid plexus cyst seen",
@@ -581,31 +606,6 @@
             "age": 22,
             "demographic_age": 22,
             "BMI": 24.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "275fca41-794e-4b82-ba73-651815e35b5c",
-            "gestational_age": null,
-            "age": 26,
-            "demographic_age": 26,
-            "BMI": 20.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain: \u2014 No choroid plexus cyst seen",
@@ -676,6 +676,31 @@
             ]
         },
         {
+            "patient_id": "93ab8fd8-c2bc-44b7-8704-481b54bdf1ed",
+            "gestational_age": null,
+            "age": 36,
+            "demographic_age": 36,
+            "BMI": 21.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
             "patient_id": "63e51524-2fea-45b8-9cb1-858fdd9c43c1",
             "gestational_age": null,
             "age": 24,
@@ -726,14 +751,14 @@
             ]
         },
         {
-            "patient_id": "398f8df0-8366-45ec-aa11-49426686535f",
+            "patient_id": "2d628469-9eb4-4c58-95df-02d0fa73d59a",
             "gestational_age": null,
-            "age": 28,
-            "demographic_age": 28,
-            "BMI": 34.0,
+            "age": 26,
+            "demographic_age": 26,
+            "BMI": 30.0,
             "findings": [
                 "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
+                "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
                 "Spine : No spina bifida",
                 "Abdominal wall: Normal",
@@ -742,7 +767,7 @@
             ],
             "examination_findings": [
                 "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
+                "Brain : No choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
                 "Spine : No spina bifida",
                 "Abdominal wall: Normal",
@@ -801,86 +826,11 @@
             ]
         },
         {
-            "patient_id": "93ab8fd8-c2bc-44b7-8704-481b54bdf1ed",
+            "patient_id": "398f8df0-8366-45ec-aa11-49426686535f",
             "gestational_age": null,
-            "age": 36,
-            "demographic_age": 36,
-            "BMI": 21.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "2d628469-9eb4-4c58-95df-02d0fa73d59a",
-            "gestational_age": null,
-            "age": 26,
-            "demographic_age": 26,
-            "BMI": 30.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "6de6f676-0b92-4398-8feb-23fedafb5bcf",
-            "gestational_age": null,
-            "age": 23,
-            "demographic_age": 23,
-            "BMI": 18.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart: Normal 4 chamber view",
-                "Spine: \u2014 Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart: Normal 4 chamber view",
-                "Spine: \u2014 Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "3279a0f2-be63-4ca4-aa83-b91e0ca33fe0",
-            "gestational_age": null,
-            "age": 29,
-            "demographic_age": 29,
-            "BMI": 21.0,
+            "age": 28,
+            "demographic_age": 28,
+            "BMI": 34.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain: \u2014 No choroid plexus cyst seen",
@@ -926,11 +876,61 @@
             ]
         },
         {
-            "patient_id": "bb5de6ac-1bab-4689-a0f4-6a38390bccce",
+            "patient_id": "6de6f676-0b92-4398-8feb-23fedafb5bcf",
             "gestational_age": null,
-            "age": 25,
-            "demographic_age": 25,
-            "BMI": 29.0,
+            "age": 23,
+            "demographic_age": 23,
+            "BMI": 18.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart: Normal 4 chamber view",
+                "Spine: \u2014 Spina bifida found",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart: Normal 4 chamber view",
+                "Spine: \u2014 Spina bifida found",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "1871d286-62d5-4e91-b9a7-9a20fd61b5ac",
+            "gestational_age": null,
+            "age": 23,
+            "demographic_age": 23,
+            "BMI": 18.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "3279a0f2-be63-4ca4-aa83-b91e0ca33fe0",
+            "gestational_age": null,
+            "age": 29,
+            "demographic_age": 29,
+            "BMI": 21.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain: \u2014 No choroid plexus cyst seen",
@@ -976,11 +976,11 @@
             ]
         },
         {
-            "patient_id": "1871d286-62d5-4e91-b9a7-9a20fd61b5ac",
+            "patient_id": "bb5de6ac-1bab-4689-a0f4-6a38390bccce",
             "gestational_age": null,
-            "age": 23,
-            "demographic_age": 23,
-            "BMI": 18.0,
+            "age": 25,
+            "demographic_age": 25,
+            "BMI": 29.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain: \u2014 No choroid plexus cyst seen",
@@ -1026,6 +1026,31 @@
             ]
         },
         {
+            "patient_id": "2d0a2cdb-8ca6-4a8b-9dee-44c23a10f17c",
+            "gestational_age": null,
+            "age": 28,
+            "demographic_age": 28,
+            "BMI": 36.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
             "patient_id": "0b0df149-509e-4e4c-ad8c-a8396f24814c",
             "gestational_age": null,
             "age": 26,
@@ -1051,11 +1076,86 @@
             ]
         },
         {
-            "patient_id": "2d0a2cdb-8ca6-4a8b-9dee-44c23a10f17c",
+            "patient_id": "970903f9-3f1d-4797-afd0-eb0308dfa403",
             "gestational_age": null,
-            "age": 28,
-            "demographic_age": 28,
-            "BMI": 36.0,
+            "age": 27,
+            "demographic_age": 27,
+            "BMI": 31.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart: Normal 4 chamber view",
+                "Spine: \u2014 Spina bifida found",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart: Normal 4 chamber view",
+                "Spine: \u2014 Spina bifida found",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "f5fe27ec-bc3d-4fba-b24b-0884020e0c51",
+            "gestational_age": null,
+            "age": 30,
+            "demographic_age": 30,
+            "BMI": 20.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain : No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "c30f12f9-dc5b-407c-bf89-f84a440627a7",
+            "gestational_age": null,
+            "age": 35,
+            "demographic_age": 35,
+            "BMI": 22.0,
+            "findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ],
+            "examination_findings": [
+                "Head : Normal skull apperance",
+                "Brain: \u2014 No choroid plexus cyst seen",
+                "Heart : Normal 4 chamber view",
+                "Spine : No spina bifida",
+                "Abdominal wall: Normal",
+                "Urinary tract: Normal",
+                "Extremities: Hands and feet appear normal"
+            ]
+        },
+        {
+            "patient_id": "88b94b96-1e12-44d6-b6b6-7e4acd1375d3",
+            "gestational_age": null,
+            "age": 38,
+            "demographic_age": 38,
+            "BMI": 25.0,
             "findings": [
                 "Head : Normal skull apperance",
                 "Brain: \u2014 No choroid plexus cyst seen",
@@ -1095,106 +1195,6 @@
                 "Brain : Choroid plexus cyst seen",
                 "Heart : Normal 4 chamber view",
                 "Spine : Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "f5fe27ec-bc3d-4fba-b24b-0884020e0c51",
-            "gestational_age": null,
-            "age": 30,
-            "demographic_age": 30,
-            "BMI": 20.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain : No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "970903f9-3f1d-4797-afd0-eb0308dfa403",
-            "gestational_age": null,
-            "age": 27,
-            "demographic_age": 27,
-            "BMI": 31.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart: Normal 4 chamber view",
-                "Spine: \u2014 Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart: Normal 4 chamber view",
-                "Spine: \u2014 Spina bifida found",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "88b94b96-1e12-44d6-b6b6-7e4acd1375d3",
-            "gestational_age": null,
-            "age": 38,
-            "demographic_age": 38,
-            "BMI": 25.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ]
-        },
-        {
-            "patient_id": "c30f12f9-dc5b-407c-bf89-f84a440627a7",
-            "gestational_age": null,
-            "age": 35,
-            "demographic_age": 35,
-            "BMI": 22.0,
-            "findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
-                "Abdominal wall: Normal",
-                "Urinary tract: Normal",
-                "Extremities: Hands and feet appear normal"
-            ],
-            "examination_findings": [
-                "Head : Normal skull apperance",
-                "Brain: \u2014 No choroid plexus cyst seen",
-                "Heart : Normal 4 chamber view",
-                "Spine : No spina bifida",
                 "Abdominal wall: Normal",
                 "Urinary tract: Normal",
                 "Extremities: Hands and feet appear normal"
