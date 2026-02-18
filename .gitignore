@@ -3,7 +3,7 @@
 # ============================================================================
 
 # Patient ID Mapping (original → UUID) - CONFIDENTIAL
-id_map.json
+# id_map.json
 id_map.json.encrypted
 
 # Encryption Keys & Secrets
@@ -144,7 +144,7 @@ data/raw_reports/*.pdf
 data/anonymized_reports/*.pdf
 
 # Generated metadata (can regenerate)
-data/patient_metadata.json
+# data/patient_metadata.json
 
 tests/output/
 
